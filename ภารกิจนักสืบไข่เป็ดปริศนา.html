@@ -1,0 +1,2272 @@
+<!doctype html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>ภารกิจนักสืบไข่เป็ดปริศนา: คำผิด คำถูกต้อง</title>
+    <meta name="description" content="เกมฝึกสะกดคำภาษาไทยสำหรับนักเรียน ป.5" />
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🥚</text></svg>" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Mali:wght@400;600;700&family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet" />
+    <style>
+/* ภารกิจนักสืบไข่เป็ดปริศนา — สไตล์หลัก */
+
+:root {
+  --navy: #2b3a55;
+  --ink: #2d2a32;
+  --sky: #e6f6ff;
+  --sky-2: #c9ecff;
+  --sun: #ffcc33;
+  --orange: #ff8a3d;
+  --pink: #ff5d8f;
+  --mint: #4cc9a0;
+  --mint-soft: #dcf7ec;
+  --red: #e5484d;
+  --red-soft: #ffe3e3;
+  --paper: #fffdf5;
+  --card: #ffffff;
+  --shadow: 0 6px 0 rgba(43, 58, 85, 0.18), 0 10px 24px rgba(43, 58, 85, 0.12);
+  --radius: 22px;
+  --tile: clamp(36px, calc((100vw - 90px) / 8), 76px);
+  --font-fun: 'Mali', 'Sarabun', system-ui, sans-serif;
+  --font-body: 'Sarabun', 'Mali', system-ui, sans-serif;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  min-height: 100dvh;
+  font-family: var(--font-fun);
+  font-size: clamp(18px, 2.2vw, 22px);
+  color: var(--ink);
+  background-color: var(--sky);
+  background-image:
+    radial-gradient(circle at 20px 20px, rgba(255, 255, 255, 0.8) 3px, transparent 4px),
+    linear-gradient(180deg, var(--sky) 0%, #fff5d9 100%);
+  background-size: 40px 40px, 100% 100%;
+  background-attachment: fixed;
+}
+button, input { font: inherit; }
+[hidden] { display: none !important; }
+
+#app { max-width: 1100px; margin: 0 auto; padding: 16px 16px 48px; }
+
+/* ---------------------------------------------------------------- HUD */
+.hud { position: sticky; top: 0; z-index: 50; background: var(--navy); color: #fff; box-shadow: 0 3px 0 rgba(0,0,0,.15); }
+.hud-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; gap: 12px; padding: 8px 16px; flex-wrap: wrap; }
+.hud-left { display: flex; align-items: center; gap: 8px; font-weight: 700; flex: 1 1 auto; min-width: 0; }
+.hud-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hud-logo { font-size: 1.4em; }
+.hud-mid { display: flex; align-items: center; gap: 14px; }
+.hud-score { background: rgba(255,255,255,.14); padding: 4px 12px; border-radius: 999px; white-space: nowrap; }
+.hud-score b { color: var(--sun); font-size: 1.15em; }
+.hud-stars { display: flex; gap: 4px; }
+.hud-star { position: relative; font-size: 1.6em; line-height: 1; color: rgba(255,255,255,.4); }
+.hud-star small { position: absolute; inset: 0; display: grid; place-items: center; font-size: .38em; font-weight: 700; color: var(--navy); padding-top: 4px; }
+.hud-star.current { color: #fff; animation: pulse 1.4s ease-in-out infinite; }
+.hud-star.done { color: var(--sun); }
+.hud-right { display: flex; gap: 8px; }
+.hud-btn { width: 48px; height: 48px; border-radius: 14px; border: 0; background: rgba(255,255,255,.16); color: #fff; font-size: 1.3em; cursor: pointer; }
+.hud-btn:hover { background: rgba(255,255,255,.28); }
+
+/* ------------------------------------------------------------ buttons */
+.btn {
+  min-height: 60px; padding: 10px 26px; border: 0; border-radius: 18px;
+  font-family: var(--font-fun); font-weight: 700; font-size: 1.05em; cursor: pointer;
+  box-shadow: 0 5px 0 rgba(0,0,0,.2); transition: transform .08s, box-shadow .08s, filter .15s;
+  touch-action: manipulation; user-select: none;
+}
+.btn:active:not(:disabled), .btn.hand-press { transform: translateY(4px); box-shadow: 0 1px 0 rgba(0,0,0,.2); }
+.btn:disabled { opacity: .5; cursor: not-allowed; }
+.btn:focus-visible { outline: 4px solid var(--pink); outline-offset: 3px; }
+.btn-primary { background: linear-gradient(180deg, #ffb347, var(--orange)); color: #fff; text-shadow: 0 2px 0 rgba(0,0,0,.15); }
+.btn-secondary { background: #fff; color: var(--navy); border: 3px solid var(--navy); }
+.btn-small { min-height: 48px; padding: 6px 16px; font-size: .85em; background: #fff; color: var(--navy); border: 2px solid var(--navy); }
+.btn-big { min-height: 70px; font-size: 1.2em; padding: 12px 32px; }
+.btn.hand-hover { outline: 5px solid var(--sun); outline-offset: 3px; filter: brightness(1.08); }
+.btn-row { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; margin: 20px 0; }
+
+/* ------------------------------------------------------------- mascot */
+.mascot svg { width: 100%; height: auto; display: block; overflow: visible; }
+.mascot-hero { width: min(240px, 55vw); margin: 0 auto; }
+.bob { animation: bob 2.6s ease-in-out infinite; }
+.mascot-row { display: flex; align-items: center; gap: 14px; justify-content: center; margin: 12px auto; max-width: 720px; }
+.mascot-row .mascot { width: 96px; flex: 0 0 auto; }
+.mascot-row.row-lg .mascot { width: 150px; }
+.mascot.mood-think svg .magnifier { animation: wiggle 2s ease-in-out infinite; transform-origin: 190px 190px; }
+.mascot-md { width: 140px; margin: 0 auto; }
+.bubble {
+  position: relative; background: #fff; border: 3px solid var(--navy); border-radius: 20px;
+  padding: 12px 18px; font-weight: 600; box-shadow: var(--shadow);
+}
+.bubble::before {
+  content: ''; position: absolute; left: -14px; top: 50%; transform: translateY(-50%);
+  border: 10px solid transparent; border-right: 14px solid var(--navy); border-left: 0;
+}
+
+/* ---------------------------------------------------------------- home */
+.home { text-align: center; padding-top: 8px; }
+.home-badge { display: inline-block; background: var(--pink); color: #fff; font-weight: 700; padding: 4px 16px; border-radius: 999px; transform: rotate(-3deg); }
+.game-title { margin: 12px 0 0; font-size: clamp(34px, 7vw, 64px); line-height: 1.25; color: var(--navy); text-shadow: 3px 3px 0 #fff, 6px 6px 0 rgba(43,58,85,.15); }
+.game-title span { display: block; }
+.game-title .accent { color: var(--orange); }
+.game-subtitle { margin: 4px 0 8px; font-size: clamp(22px, 3.5vw, 32px); font-weight: 700; color: var(--mint); letter-spacing: .02em; }
+.home-intro { max-width: 620px; margin: 8px auto 16px; }
+.name-box { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px; max-width: 520px; margin: 0 auto; display: grid; gap: 12px; }
+.name-box label { font-weight: 700; font-size: 1.1em; color: var(--navy); }
+.name-input { width: 100%; min-height: 64px; padding: 10px 18px; font-size: 1.2em; text-align: center; border: 3px solid var(--sky-2); border-radius: 16px; background: var(--sky); }
+.name-input:focus { outline: none; border-color: var(--orange); background: #fff; }
+.error { color: var(--red); margin: 0; min-height: 1.2em; font-weight: 600; }
+.mission-list { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 22px; }
+.mission-list li { background: rgba(255,255,255,.8); border: 2px dashed var(--navy); padding: 8px 16px; border-radius: 14px; }
+
+/* ------------------------------------------------------ intro / titles */
+.intro { text-align: center; padding-top: 12px; }
+.intro-emoji { font-size: 64px; }
+.prev-result { display: inline-block; background: var(--mint-soft); border: 3px solid var(--mint); padding: 8px 20px; border-radius: 16px; font-weight: 700; }
+.mission-title { text-align: center; color: var(--navy); font-size: clamp(26px, 4vw, 38px); margin: 8px 0; }
+.mission-title.small { font-size: clamp(20px, 3vw, 28px); margin: 0; }
+
+.progress { display: flex; align-items: center; justify-content: center; gap: 12px; margin: 6px 0; flex-wrap: wrap; }
+.progress-text { font-weight: 700; color: var(--navy); }
+.dots { display: flex; gap: 6px; }
+.dot { width: 18px; height: 18px; border-radius: 50%; background: #fff; border: 3px solid var(--navy); opacity: .5; }
+.dot.now { opacity: 1; background: var(--sun); transform: scale(1.2); }
+.dot.ok { opacity: 1; background: var(--mint); }
+.dot.bad { opacity: 1; background: var(--pink); }
+
+/* --------------------------------------------------------- word cards */
+.card-row { display: grid; gap: 18px; margin: 18px auto; max-width: 820px; }
+.card-row.two { grid-template-columns: 1fr 1fr; }
+.card-row.four { grid-template-columns: 1fr 1fr; }
+@media (min-width: 900px) { .card-row.four { grid-template-columns: repeat(4, 1fr); max-width: 1000px; } }
+.word-card {
+  position: relative; min-height: 130px; padding: 16px; border-radius: var(--radius);
+  background: #fff; border: 4px solid var(--navy); box-shadow: var(--shadow);
+  font-family: var(--font-body); font-size: clamp(34px, 6vw, 56px); font-weight: 700; color: var(--ink);
+  cursor: pointer; transition: transform .12s, background .2s; touch-action: manipulation; overflow: hidden;
+}
+.word-card:hover:not(:disabled) { transform: translateY(-4px) rotate(-1deg); background: #fffbe8; }
+.word-card:disabled { cursor: default; }
+.word-card.is-correct { background: var(--mint-soft); border-color: var(--mint); }
+.word-card.is-correct::after { content: '✓'; position: absolute; top: 6px; right: 14px; font-size: .6em; color: var(--mint); }
+.word-card.is-wrong { background: var(--red-soft); border-color: var(--red); }
+.word-card.is-wrong::after { content: '✗'; position: absolute; top: 6px; right: 14px; font-size: .6em; color: var(--red); }
+
+.suspect { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; font-size: clamp(28px, 4.6vw, 44px); min-height: 150px; }
+.suspect-tag { font-family: var(--font-fun); font-size: 15px; font-weight: 600; color: #7a6f86; background: #f1eef6; padding: 2px 10px; border-radius: 999px; }
+.suspect.caught { background: #fff3c4; border-color: var(--orange); }
+.suspect.caught::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: repeating-linear-gradient(90deg, transparent 0 26px, rgba(43,58,85,.55) 26px 34px);
+  animation: bars-drop .5s cubic-bezier(.3,1.5,.6,1) both;
+}
+.suspect.caught .suspect-tag { visibility: hidden; }
+.suspect-word { position: relative; z-index: 1; padding: 0 10px; border-radius: 12px; }
+.suspect.caught .suspect-word { background: rgba(255, 243, 196, .92); color: var(--red); }
+.caught-stamp {
+  position: absolute; z-index: 2; top: 12px; left: 50%; transform: translateX(-50%) rotate(-8deg);
+  font-family: var(--font-fun); font-size: 18px; font-weight: 700; color: #fff; background: var(--red);
+  border: 3px solid #fff; padding: 2px 12px; border-radius: 10px; white-space: nowrap; animation: stamp .45s .2s both;
+}
+.suspect.is-innocent { background: #eef2ff; border-color: #8a97c9; }
+
+/* ----------------------------------------------------------- feedback */
+.feedback-slot { max-width: 820px; margin: 0 auto; }
+.feedback {
+  display: flex; gap: 16px; align-items: center; background: #fff; border-radius: var(--radius);
+  padding: 16px 20px; box-shadow: var(--shadow); border: 4px solid var(--mint); animation: pop .3s ease-out;
+}
+.feedback.is-bad { border-color: var(--pink); }
+.feedback-mascot { width: 110px; flex: 0 0 auto; }
+.feedback-body { flex: 1; display: grid; gap: 8px; }
+.feedback-title { font-size: 1.3em; font-weight: 700; color: var(--navy); }
+.feedback-detail s, .strike, s { text-decoration-color: var(--red); text-decoration-thickness: 3px; color: #a33; }
+.feedback-word { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.feedback-word .label { font-size: .85em; background: var(--mint-soft); color: #1d7a5c; padding: 2px 10px; border-radius: 999px; }
+.feedback-word b { font-family: var(--font-body); font-size: 1.8em; color: #1d7a5c; }
+.feedback-expl { font-family: var(--font-body); background: #fff8dc; border-radius: 12px; padding: 8px 12px; }
+.btn-next { justify-self: end; }
+
+/* ------------------------------------------------------------ effects */
+#fx-layer { position: fixed; inset: 0; pointer-events: none; z-index: 100; overflow: hidden; }
+.fx-star { position: fixed; width: var(--size); height: var(--size); margin: calc(var(--size) / -2) 0 0 calc(var(--size) / -2); animation: star-fly 0.9s ease-out forwards; }
+.fx-star svg { width: 100%; height: 100%; fill: currentColor; filter: drop-shadow(0 2px 0 rgba(0,0,0,.15)); }
+.fx-confetti { position: fixed; top: -20px; width: 12px; height: 18px; border-radius: 3px; animation: confetti-fall 2.8s ease-in forwards; }
+
+/* ---------------------------------------------------- mission 2 intro */
+.howto-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin: 16px 0; }
+.howto-card { background: #fff; border-radius: var(--radius); padding: 16px 20px; box-shadow: var(--shadow); }
+.howto-card h3 { margin: 0 0 8px; color: var(--navy); }
+.howto-card ol { margin: 0; padding-left: 1.4em; font-family: var(--font-body); line-height: 1.7; }
+.note { text-align: center; font-family: var(--font-body); }
+.privacy { text-align: center; background: var(--mint-soft); color: #1d6b52; border-radius: 14px; padding: 8px 14px; font-weight: 600; max-width: 760px; margin: 10px auto; }
+.privacy.small { font-size: 14px; padding: 4px 10px; margin: 0; background: rgba(220,247,236,.9); }
+.warn { text-align: center; background: #fff1d6; color: #8a5200; border-radius: 14px; padding: 8px 14px; font-weight: 600; }
+
+/* ---------------------------------------------------- mission 2 stage */
+.m2-stage {
+  position: relative; margin: 0 -8px; border-radius: 28px; overflow: hidden;
+  min-height: calc(100dvh - 110px); background: linear-gradient(160deg, #fdf2ff, #e6f6ff 60%, #fff7df);
+  border: 4px solid var(--navy); box-shadow: var(--shadow); touch-action: none;
+}
+.m2-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); opacity: 0; transition: opacity .4s; }
+.m2-stage.camera-on .m2-video { opacity: 1; }
+.m2-veil { position: absolute; inset: 0; pointer-events: none; background: transparent; }
+.m2-stage.camera-on .m2-veil { background: linear-gradient(180deg, rgba(255,255,255,.55), rgba(255,255,255,.25) 50%, rgba(255,255,255,.55)); }
+.m2-content { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 14px 12px 12px; min-height: inherit; }
+.m2-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; flex-wrap: wrap; }
+.m2-progress .progress { background: rgba(255,255,255,.85); padding: 4px 14px; border-radius: 999px; }
+.hint-card { background: rgba(255,255,255,.94); border: 3px solid var(--navy); border-radius: 20px; padding: 12px 18px; max-width: 760px; width: 100%; text-align: center; box-shadow: var(--shadow); }
+.hint-label { font-weight: 700; color: var(--orange); }
+.hint-text { font-family: var(--font-body); font-size: clamp(22px, 3.4vw, 32px); font-weight: 700; color: var(--navy); line-height: 1.5; }
+.hint-text .blank { display: inline-block; min-width: 3em; border-bottom: 4px dashed var(--orange); color: var(--orange); margin: 0 .2em; }
+.hint-sub { font-size: .8em; color: #6a6478; }
+.slots { display: flex; gap: clamp(4px, 1vw, 10px); justify-content: center; flex-wrap: nowrap; padding: 12px; background: rgba(43,58,85,.85); border-radius: 18px; }
+.slot { width: var(--tile); height: var(--tile); border-radius: 14px; border: 3px dashed rgba(255,255,255,.8); background: rgba(255,255,255,.15); transition: background .2s; }
+.slot.filled { border-style: solid; }
+.slot.slot-ok { background: var(--mint); border-color: #fff; }
+.slot.slot-bad { background: var(--pink); border-color: #fff; }
+.preview { background: rgba(255,255,255,.9); padding: 4px 16px; border-radius: 999px; font-size: .9em; }
+.preview b { font-family: var(--font-body); font-size: 1.4em; color: var(--navy); }
+.tray { width: 100%; max-width: 760px; min-height: calc(var(--tile) * var(--rows, 2) * 1.3 + var(--tile) * 0.3); border: 3px dashed rgba(43,58,85,.35); border-radius: 20px; background: rgba(255,255,255,.35); }
+.m2-footer { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: center; margin-top: auto; }
+.m2-status { background: rgba(43,58,85,.88); color: #fff; padding: 4px 14px; border-radius: 999px; font-size: 15px; }
+
+.m2-tiles { position: absolute; inset: 0; z-index: 3; pointer-events: none; }
+.tile {
+  position: absolute; left: 0; top: 0; width: var(--tile); height: var(--tile);
+  display: grid; place-items: center; border-radius: 14px; pointer-events: auto; cursor: grab;
+  background: linear-gradient(180deg, #fff, #fff4d1); border: 3px solid var(--navy); box-shadow: 0 4px 0 rgba(43,58,85,.35);
+  font-family: var(--font-body); font-size: calc(var(--tile) * 0.55); font-weight: 700; color: var(--navy);
+  transition: transform .25s cubic-bezier(.3,1.3,.6,1), box-shadow .15s; user-select: none; touch-action: none; line-height: 1;
+}
+.tile .ghost { color: #c9c3d6; }
+.tile.combining .mark { color: var(--pink); }
+.tile.no-anim { transition: none; }
+.tile.held { transition: none; z-index: 5; cursor: grabbing; background: #fff; border-color: var(--orange); box-shadow: 0 12px 20px rgba(0,0,0,.25); }
+.tile.hover { border-color: var(--sun); box-shadow: 0 0 0 5px rgba(255,204,51,.7), 0 4px 0 rgba(43,58,85,.35); }
+.tile.locked { pointer-events: none; }
+
+.m2-cursors { position: absolute; inset: 0; z-index: 7; pointer-events: none; }
+.hand-cursor {
+  position: absolute; left: 0; top: 0; width: 44px; height: 44px; margin: -22px 0 0 -22px; border-radius: 50%;
+  border: 5px solid #1ea7fd; background: rgba(30,167,253,.25); box-shadow: 0 0 0 3px #fff; transition: background .1s, border-color .1s, width .1s, height .1s, margin .1s;
+}
+.hand-cursor.pinching { border-color: var(--orange); background: rgba(255,138,61,.6); width: 32px; height: 32px; margin: -16px 0 0 -16px; }
+.hand-cursor.lost { opacity: .35; }
+
+.m2-overlay { position: absolute; inset: 0; z-index: 6; display: grid; place-items: center; padding: 16px; background: rgba(43,58,85,.35); backdrop-filter: blur(2px); }
+.m2-overlay-card { background: #fff; border-radius: var(--radius); padding: 24px; max-width: 560px; text-align: center; box-shadow: var(--shadow); display: grid; gap: 10px; justify-items: center; }
+.m2-overlay .feedback { max-width: 720px; width: 100%; }
+.big { font-size: 1.25em; font-weight: 700; margin: 0; }
+.spinner { width: 56px; height: 56px; border-radius: 50%; border: 7px solid var(--sky-2); border-top-color: var(--orange); animation: spin 0.9s linear infinite; }
+
+/* ------------------------------------------------------------ summary */
+.summary { display: grid; gap: 18px; }
+.summary-card { text-align: center; background: #fff; border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); }
+.summary-card h2 { color: var(--navy); margin: 0 0 6px; }
+.big-stars { font-size: clamp(56px, 10vw, 84px); letter-spacing: 6px; color: #d9d9e3; line-height: 1.1; }
+.big-stars .on { color: var(--sun); text-shadow: 0 4px 0 #e0a800; display: inline-block; animation: pop .5s both; }
+.big-stars .on:nth-child(2) { animation-delay: .15s; }
+.big-stars .on:nth-child(3) { animation-delay: .3s; }
+.total-score { font-size: 1.3em; }
+.total-score b { font-size: 2em; color: var(--orange); }
+.result-list { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+.result-list li { background: var(--sky); border-radius: 12px; padding: 6px 14px; }
+.review-result { font-weight: 700; color: #1d7a5c; }
+
+/* ----------------------------------------------------------- notebook */
+.notebook { position: relative; background: #7a4c22; border-radius: 18px; padding: 14px 14px 14px 44px; box-shadow: var(--shadow); }
+.nb-rings { position: absolute; left: 10px; top: 24px; bottom: 24px; width: 24px; background: radial-gradient(circle at 12px 12px, #d9d9d9 6px, #888 7px, transparent 8px) 0 0 / 24px 44px repeat-y; }
+.nb-page {
+  background-color: var(--paper); border-radius: 8px; padding: 18px 20px 24px 56px; min-height: 260px;
+  background-image: linear-gradient(90deg, transparent 38px, #ff9aa2 38px, #ff9aa2 40px, transparent 40px), repeating-linear-gradient(180deg, transparent 0 35px, #cde3f5 35px 36px);
+  font-family: var(--font-body);
+}
+.nb-header h2 { margin: 0; font-family: var(--font-fun); color: var(--navy); font-size: clamp(26px, 4vw, 36px); }
+.nb-meta { display: flex; flex-wrap: wrap; gap: 8px 20px; margin: 6px 0 12px; }
+.nb-intro { margin: 0 0 10px; }
+.nb-empty { text-align: center; padding: 20px 0; }
+.nb-table-wrap { overflow-x: auto; }
+.nb-table { width: 100%; border-collapse: collapse; background: rgba(255,255,255,.7); }
+.nb-table th, .nb-table td { border: 2px solid #cfc6b0; padding: 8px 10px; text-align: left; vertical-align: top; }
+.nb-table th { background: #fff0c2; font-family: var(--font-fun); color: var(--navy); }
+.nb-chosen .strike { font-size: 1.3em; font-weight: 700; text-decoration: line-through; }
+.nb-chosen small { display: block; color: #6a6478; font-size: .8em; }
+.nb-correct { font-size: 1.4em; font-weight: 700; color: #1d7a5c; white-space: nowrap; }
+.chip { display: inline-block; font-size: .75em; background: var(--sky-2); color: var(--navy); padding: 1px 8px; border-radius: 999px; font-weight: 700; }
+
+@media (max-width: 700px) {
+  .notebook { padding-left: 34px; }
+  .nb-page { padding: 14px 12px 18px 48px; }
+  .nb-table thead { display: none; }
+  .nb-table, .nb-table tbody, .nb-table tr, .nb-table td { display: block; width: 100%; }
+  .nb-table tr { margin-bottom: 12px; border: 2px solid #cfc6b0; border-radius: 12px; background: #fff; }
+  .nb-table td { border: 0; border-bottom: 1px dashed #e2dbc8; }
+  .nb-table td::before { content: attr(data-label); display: block; font-size: .72em; font-weight: 700; color: #8a7f6a; }
+}
+
+/* ---------------------------------------------------------- responsive */
+@media (max-width: 600px) {
+  #app { padding: 10px 10px 40px; }
+  .hud-inner { padding: 6px 10px; gap: 6px; }
+  .hud-btn { width: 44px; height: 44px; }
+  .mascot-row { gap: 10px; }
+  .mascot-row .mascot { width: 72px; }
+  .mascot-row.row-lg .mascot { width: 110px; }
+  .word-card { min-height: 110px; }
+  .card-row { gap: 12px; }
+  .feedback { flex-direction: column; text-align: center; }
+  .feedback-mascot { width: 80px; }
+  .feedback-word { justify-content: center; }
+  .btn-next { justify-self: stretch; }
+  .btn-big { width: 100%; }
+  .m2-stage { margin: 0 -4px; border-radius: 20px; }
+  .slots { padding: 8px; }
+  .slot, .tile { border-radius: 10px; }
+}
+
+/* ---------------------------------------------------------- animations */
+@keyframes bob { 0%, 100% { transform: translateY(0) rotate(-2deg); } 50% { transform: translateY(-10px) rotate(2deg); } }
+@keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.18); } }
+@keyframes wiggle { 0%, 100% { transform: rotate(0); } 50% { transform: rotate(-8deg); } }
+@keyframes pop { 0% { transform: scale(.6); opacity: 0; } 70% { transform: scale(1.06); opacity: 1; } 100% { transform: scale(1); } }
+@keyframes shake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-8px); } 40%, 80% { transform: translateX(8px); } }
+.shake { animation: shake .4s; }
+@keyframes star-fly { 0% { transform: translate(0, 0) scale(.3) rotate(0); opacity: 1; } 100% { transform: translate(var(--dx), var(--dy)) scale(1) rotate(200deg); opacity: 0; } }
+@keyframes confetti-fall { 0% { transform: translate(0, 0) rotate(0); } 100% { transform: translate(var(--drift), 110vh) rotate(720deg); } }
+@keyframes bars-drop { from { transform: translateY(-100%); } to { transform: translateY(0); } }
+@keyframes stamp { 0% { transform: translateX(-50%) rotate(-8deg) scale(2.2); opacity: 0; } 100% { transform: translateX(-50%) rotate(-8deg) scale(1); opacity: 1; } }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}
+
+/* --------------------------------------------------------------- print */
+@media print {
+  @page { size: A4; margin: 12mm; }
+  body { background: #fff !important; font-size: 13pt; }
+  .no-print, .hud, #fx-layer { display: none !important; }
+  #app { max-width: none; padding: 0; }
+  .summary { display: block; }
+  .notebook { background: none; box-shadow: none; padding: 0; }
+  .nb-rings { display: none; }
+  .nb-page { background-image: none; padding: 0; min-height: 0; }
+  .nb-table thead { display: table-header-group; }
+  .nb-table, .nb-table tbody { display: table; width: 100%; }
+  .nb-table tbody { display: table-row-group; }
+  .nb-table tr { display: table-row; page-break-inside: avoid; border: 0; }
+  .nb-table td { display: table-cell; border: 1px solid #999; }
+  .nb-table td::before { content: none; }
+  .nb-table th { background: #eee !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .nb-empty .mascot { width: 90px; }
+}
+
+</style>
+  </head>
+  <body>
+    <header id="hud" class="hud no-print"></header>
+    <main id="app"></main>
+    <noscript>กรุณาเปิดใช้งาน JavaScript เพื่อเล่นเกม</noscript>
+    <script type="module">
+// ===== utils/thai.js =====
+// เครื่องมือจัดการอักขระไทย
+// ใช้ Array.from แยกทีละ code point เพื่อให้สระบน/ล่างและวรรณยุกต์เป็นตัวของมันเอง
+// เช่น "ใหญ่" -> ["ใ", "ห", "ญ", "่"]
+
+const splitThaiChars = (word) => Array.from(word.normalize('NFC'));
+
+const charCount = (word) => splitThaiChars(word).length;
+
+// สระบน สระล่าง ไม้หันอากาศ ไม้ไต่คู้ วรรณยุกต์ การันต์ ฯลฯ (อักขระที่ต้องเกาะพยัญชนะ)
+const COMBINING = /[ัิ-ฺ็-๎]/;
+
+const isCombining = (ch) => COMBINING.test(ch);
+
+/**
+ * แยกส่วนแสดงผลของตัวอักษร 1 ตัว
+ * อักขระที่ต้องเกาะพยัญชนะจะใช้ "อ" สีจางเป็นฐาน (บางฟอนต์ไม่มีวงกลมประ ◌)
+ */
+const displayParts = (ch) => (isCombining(ch) ? { ghost: 'อ', mark: ch } : { ghost: '', mark: ch });
+
+// ===== data/words.js =====
+// คลังคำสำหรับเกม "ภารกิจนักสืบไข่เป็ดปริศนา"
+// ---------------------------------------------------------------
+// โครงสร้างของแต่ละคำ:
+//   correct     : คำที่เขียนถูก (ตามพจนานุกรมฉบับราชบัณฑิตยสถาน/ราชบัณฑิตยสภา)
+//   wrong       : รายการคำที่เด็กมักเขียนผิด (ต้องไม่ใช่คำที่มีความหมายอื่นที่ถูกต้อง)
+//   hint        : คำใบ้เป็นตัวหนังสือ ใช้ในภารกิจที่ 2 (ใช้ ____ แทนช่องว่างในประโยค)
+//   explanation : คำอธิบายหลักการสะกดสั้นๆ
+//   category    : หมวด (ร/ล, สระอุ/อู, สระอิ/อี, ใ/ไ, ตัวสะกด, การันต์, ศ/ษ/ส, คำทั่วไป)
+//
+// วิธีเพิ่มคำใหม่: คัดลอกบรรทัดหนึ่งแล้วแก้ไข แล้วบันทึกไฟล์
+// ภารกิจที่ 2 จะเลือกเฉพาะคำที่ยาวไม่เกิน 8 อักขระให้อัตโนมัติ
+// ---------------------------------------------------------------
+
+const WORDS = [
+  // ---------- ร / ล ----------
+  { correct: 'ระลึก', wrong: ['ระรึก', 'ละลึก'], hint: 'นึกถึงเรื่องที่ผ่านมา เช่น ____ถึงบุญคุณพ่อแม่', explanation: 'พยางค์แรกใช้ ร เรือ พยางค์ที่สองใช้ ล ลิง: ระ-ลึก', category: 'ร/ล' },
+  { correct: 'เรียบร้อย', wrong: ['เรียบล้อย', 'เลียบร้อย'], hint: 'เป็นระเบียบ ไม่ยุ่งเหยิง เช่น แต่งกายให้____', explanation: 'ทั้งสองพยางค์ใช้ ร เรือ: เรียบ-ร้อย', category: 'ร/ล' },
+  { correct: 'ระเบียบ', wrong: ['ละเบียบ', 'ระเบียป'], hint: 'แบบแผนที่ทุกคนต้องทำตาม เช่น รักษา____ของห้องเรียน', explanation: 'ขึ้นต้นด้วย ร เรือ และสะกดด้วย บ ใบไม้', category: 'ร/ล' },
+  { correct: 'เกร็ดความรู้', wrong: ['เกล็ดความรู้'], hint: 'ความรู้สั้นๆ ที่น่าสนใจ', explanation: 'เกร็ด (ร เรือ) แปลว่าเรื่องเล็กๆ ปลีกย่อย ส่วน เกล็ด (ล ลิง) คือเกล็ดปลา', category: 'ร/ล' },
+  { correct: 'เพลิดเพลิน', wrong: ['เพลิดเพิน', 'เพิดเพลิน'], hint: 'สนุกสนานจนลืมเวลา', explanation: 'ทั้งสองพยางค์มี พ ควบ ล ลิง: เพลิด-เพลิน', category: 'ร/ล' },
+  { correct: 'รื่นเริง', wrong: ['ลื่นเริง', 'รื่นเลิง'], hint: 'สนุกสนานเบิกบานใจ เช่น งานวันเด็กแสน____', explanation: 'ทั้งสองพยางค์ใช้ ร เรือ (ลื่น ที่ใช้ ล ลิง แปลว่าลื่นไถล)', category: 'ร/ล' },
+  { correct: 'เปลี่ยน', wrong: ['เปรี่ยน', 'เปลียน'], hint: 'ทำให้ต่างไปจากเดิม เช่น ____ชุดพละก่อนเข้าเรียน', explanation: 'ป ควบกล้ำ ล ลิง และมีไม้เอก: เปลี่ยน', category: 'ร/ล' },
+  { correct: 'กล้วย', wrong: ['กร้วย', 'กลัวย'], hint: 'ผลไม้เปลือกสีเหลือง ลิงชอบกิน', explanation: 'ก ควบกล้ำ ล ลิง และมีไม้โทบน ล: กล้วย', category: 'ร/ล' },
+  { correct: 'จลาจล', wrong: ['จลาจร', 'จราจล'], hint: 'ความวุ่นวายไม่สงบในบ้านเมือง', explanation: 'ทั้งสองพยางค์ใช้ ล ลิง (ต่างจาก จราจร ที่หมายถึงการไปมาบนถนน)', category: 'ร/ล' },
+
+  // ---------- สระอุ / อู ----------
+  { correct: 'ทุเรียน', wrong: ['ทูเรียน'], hint: 'ราชาผลไม้ เปลือกมีหนามแหลม กลิ่นแรง', explanation: 'พยางค์แรกเสียงสั้น ใช้สระอุ: ทุ-เรียน', category: 'สระอุ/อู' },
+  { correct: 'ชมพู่', wrong: ['ชมพุ่', 'ชมภู่'], hint: 'ผลไม้รูปร่างคล้ายระฆัง เนื้อกรอบ ฉ่ำน้ำ', explanation: 'พู่ เสียงยาว ใช้สระอู และใช้ พ พาน', category: 'สระอุ/อู' },
+  { correct: 'บุญคุณ', wrong: ['บุญคูณ', 'บุณคุณ'], hint: 'ความดีที่ผู้อื่นทำให้เรา เช่น พ่อแม่มี____ต่อลูก', explanation: 'บุญ ใช้ ญ หญิง คุณ ใช้ ณ เณร และทั้งสองพยางค์ใช้สระอุ', category: 'สระอุ/อู' },
+  { correct: 'มนุษย์', wrong: ['มนูษย์', 'มนุษ'], hint: 'คน สิ่งมีชีวิตที่พูดและคิดได้', explanation: 'มีสระอุใต้ น และลงท้ายด้วย ษย์ (ย การันต์)', category: 'สระอุ/อู' },
+  { correct: 'สุขภาพ', wrong: ['สูขภาพ', 'สุขภาบ'], hint: 'สภาพร่างกายและจิตใจ เช่น ออกกำลังกายเพื่อ____ที่ดี', explanation: 'สุข ใช้สระอุและ ข ไข่ ส่วน ภาพ สะกดด้วย พ พาน', category: 'สระอุ/อู' },
+  { correct: 'ขนุน', wrong: ['ขะนุน', 'ขนูน'], hint: 'ผลไม้ลูกใหญ่ เปลือกมีหนาม เนื้อสีเหลือง กลิ่นหอม', explanation: 'เขียน ขนุน ไม่ต้องมีสระอะ และใช้สระอุ (อ่านว่า ขะ-หนุน)', category: 'สระอุ/อู' },
+  { correct: 'สมุด', wrong: ['สมุท', 'สะมุด'], hint: 'กระดาษเย็บเป็นเล่ม ใช้จดบันทึก', explanation: 'สะกดด้วย ด เด็ก และไม่ต้องใส่สระอะหลัง ส', category: 'สระอุ/อู' },
+
+  // ---------- สระอิ / อี ----------
+  { correct: 'นาฬิกา', wrong: ['นาฬีกา', 'นาลิกา'], hint: 'เครื่องบอกเวลา มีเข็มสั้นและเข็มยาว', explanation: 'ใช้ ฬ จุฬา และสระอิ (เสียงสั้น): นา-ฬิ-กา', category: 'สระอิ/อี' },
+  { correct: 'ปีติ', wrong: ['ปิติ', 'ปีติ์'], hint: 'ความอิ่มใจ ความยินดี เช่น แม่____ที่ลูกเป็นคนดี', explanation: 'พยางค์แรกใช้สระอี (ปี) พยางค์หลังใช้สระอิ (ติ)', category: 'สระอิ/อี' },
+  { correct: 'พิธี', wrong: ['พีธี', 'พิธิ'], hint: 'งานที่จัดขึ้นตามแบบแผน เช่น ____ไหว้ครู', explanation: 'พิ ใช้สระอิ ส่วน ธี ใช้สระอี', category: 'สระอิ/อี' },
+  { correct: 'ขยี้', wrong: ['ขยิ้', 'ขยี่'], hint: 'ใช้มือถูไปมา เช่น อย่า____ตาเวลาฝุ่นเข้าตา', explanation: 'ใช้สระอี (เสียงยาว) และไม้โท: ขยี้', category: 'สระอิ/อี' },
+  { correct: 'คลินิก', wrong: ['คลีนิก', 'คลินิค'], hint: 'สถานพยาบาลขนาดเล็กที่หมอตรวจรักษาคนไข้', explanation: 'ทั้งสองพยางค์ใช้สระอิ และสะกดด้วย ก ไก่', category: 'สระอิ/อี' },
+  { correct: 'สวัสดี', wrong: ['สวัสดี์', 'สวัสดิ'], hint: 'คำทักทายของคนไทยเมื่อพบกัน', explanation: 'ลงท้ายด้วย ดี สระอี และไม่มีการันต์', category: 'สระอิ/อี' },
+
+  // ---------- ใ / ไ ----------
+  { correct: 'ลำไย', wrong: ['ลำใย'], hint: 'ผลไม้ลูกกลม เปลือกสีน้ำตาล เนื้อใสรสหวาน', explanation: 'ลำไย ใช้ไม้มลาย (ไ) เพราะไม่อยู่ใน 20 คำที่ใช้ไม้ม้วน', category: 'ใ/ไ' },
+  { correct: 'หลงใหล', wrong: ['หลงไหล'], hint: 'ชอบมากจนลืมตัว เช่น ____ในเสียงเพลง', explanation: 'ใหล ใช้ไม้ม้วน (ใ) เป็นหนึ่งใน 20 คำที่ใช้ไม้ม้วน', category: 'ใ/ไ' },
+  { correct: 'ใหญ่', wrong: ['ไหญ่', 'ใหญ'], hint: 'มีขนาดโต ตรงข้ามกับเล็ก', explanation: 'ใช้ไม้ม้วน (ใ) ตามด้วย ห ญ หญิง และไม้เอก', category: 'ใ/ไ' },
+  { correct: 'ใส่ใจ', wrong: ['ไส่ใจ', 'ใส่ไจ'], hint: 'สนใจ เอาใจใส่ เช่น ____ทำการบ้านทุกวัน', explanation: 'ทั้ง ใส่ และ ใจ ใช้ไม้ม้วน (ใ)', category: 'ใ/ไ' },
+  { correct: 'อะไหล่', wrong: ['อะหลั่ย', 'อะไหร่'], hint: 'ชิ้นส่วนสำรองไว้เปลี่ยน เช่น ____รถจักรยาน', explanation: 'ไหล่ ใช้ไม้มลาย (ไ) ห นำ ล ลิง และไม้เอก', category: 'ใ/ไ' },
+
+  // ---------- ตัวสะกด ----------
+  { correct: 'สังเกต', wrong: ['สังเกตุ'], hint: 'ดูอย่างตั้งใจ เช่น นักสืบต้อง____ร่องรอยให้ดี', explanation: 'สะกดด้วย ต เต่า ตัวเดียว ไม่มีสระอุใต้ ต', category: 'ตัวสะกด' },
+  { correct: 'อนุญาต', wrong: ['อนุญาติ', 'อนุญาด'], hint: 'ยอมให้ทำได้ เช่น คุณครู____ให้ออกไปเล่น', explanation: 'ลงท้ายด้วย ต เต่า ไม่มีสระอิ (ต่างจาก ญาติ ที่แปลว่าพี่น้อง)', category: 'ตัวสะกด' },
+  { correct: 'บริเวณ', wrong: ['บริเวน'], hint: 'พื้นที่โดยรอบ เช่น ช่วยกันเก็บขยะ____โรงเรียน', explanation: 'สะกดด้วย ณ เณร: บอ-ริ-เวน', category: 'ตัวสะกด' },
+  { correct: 'คุณภาพ', wrong: ['คุนภาพ', 'คุณภาบ'], hint: 'ความดีของสิ่งของ เช่น สินค้ามี____ดี', explanation: 'คุณ สะกดด้วย ณ เณร ส่วน ภาพ สะกดด้วย พ พาน', category: 'ตัวสะกด' },
+  { correct: 'ปรากฏ', wrong: ['ปรากฎ', 'ปรากต'], hint: 'แสดงให้เห็น เช่น รอยเท้า____อยู่บนพื้น', explanation: 'สะกดด้วย ฏ ปฏัก (ฐานหยัก) ไม่ใช่ ฎ ชฎา', category: 'ตัวสะกด' },
+  { correct: 'ธรรมชาติ', wrong: ['ธรรมชาด', 'ธรรมชาต'], hint: 'สิ่งที่เกิดขึ้นเอง เช่น ภูเขา ป่าไม้ แม่น้ำ', explanation: 'ชาติ เขียนด้วย ต เต่า และสระอิ (สระอิไม่ออกเสียง)', category: 'ตัวสะกด' },
+  { correct: 'รสชาติ', wrong: ['รสชาด', 'รดชาติ'], hint: 'รสของอาหาร เช่น หวาน เค็ม เปรี้ยว', explanation: 'รส สะกดด้วย ส และ ชาติ เขียนด้วย ต เต่า กับสระอิ', category: 'ตัวสะกด' },
+  { correct: 'ผลิต', wrong: ['ผลิด', 'ผะลิต'], hint: 'ทำให้เกิดขึ้น เช่น โรงงาน____ของเล่น', explanation: 'สะกดด้วย ต เต่า: ผะ-หลิด', category: 'ตัวสะกด' },
+  { correct: 'สัญญาณ', wrong: ['สัญญาน', 'สัญาณ'], hint: 'เครื่องหมายบอกให้รู้ เช่น ไฟ____จราจร', explanation: 'มี ญ หญิง สองตัว และสะกดด้วย ณ เณร', category: 'ตัวสะกด' },
+
+  // ---------- การันต์ (์) ----------
+  { correct: 'อุปกรณ์', wrong: ['อุปกรน์', 'อุปกรณ'], hint: 'เครื่องมือหรือของใช้ประกอบการทำงาน เช่น ____การเรียน', explanation: 'ใช้ ณ เณร และมีไม้ทัณฑฆาต (การันต์) บน ณ', category: 'การันต์' },
+  { correct: 'ทรัพย์', wrong: ['ทรัพ', 'ทรัพท์'], hint: 'เงินทองและของมีค่า เช่น นักสืบพบขุม____ใต้ดิน', explanation: 'มี ย การันต์ (ย์) ต่อท้าย: ทรัพย์', category: 'การันต์' },
+  { correct: 'ประโยชน์', wrong: ['ประโยช', 'ประโยชณ์'], hint: 'ผลที่ดี สิ่งที่เป็นคุณ เช่น ผักมี____ต่อร่างกาย', explanation: 'ลงท้ายด้วย น การันต์ (น์) ใช้ น หนู', category: 'การันต์' },
+  { correct: 'อาจารย์', wrong: ['อาจาร', 'อาจารณ์'], hint: 'ผู้สั่งสอนวิชาความรู้ คล้ายคุณครู', explanation: 'ลงท้ายด้วย ย การันต์ (ย์)', category: 'การันต์' },
+  { correct: 'เคารพ', wrong: ['เคารพ์', 'เคาระพ'], hint: 'แสดงความนับถือ เช่น นักเรียน____ธงชาติทุกเช้า', explanation: 'ไม่มีการันต์ อ่านว่า เคา-รบ', category: 'การันต์' },
+  { correct: 'เอกลักษณ์', wrong: ['เอกลักษ', 'เอกลักษน์'], hint: 'ลักษณะเด่นที่เป็นของตนเอง เช่น ภาษาไทยเป็น____ของชาติ', explanation: 'ลงท้ายด้วย ษณ์ (ษ ฤๅษี ตามด้วย ณ การันต์)', category: 'การันต์' },
+  { correct: 'ศัพท์', wrong: ['ศัพ', 'สัพท์'], hint: 'คำ เช่น ท่องคำ____ภาษาอังกฤษ', explanation: 'ขึ้นต้นด้วย ศ ศาลา และลงท้ายด้วย ท การันต์ (ท์)', category: 'การันต์' },
+  { correct: 'จันทร์', wrong: ['จันทร', 'จันท์'], hint: 'ดวงไฟกลมๆ บนฟ้าตอนกลางคืน หรือชื่อวันแรกของสัปดาห์ทำงาน', explanation: 'ท และ ร ไม่ออกเสียง มีการันต์บน ร: จันทร์', category: 'การันต์' },
+  { correct: 'สัตว์', wrong: ['สัตว'], hint: 'สิ่งมีชีวิตที่เคลื่อนที่ได้ เช่น ช้าง ม้า แมว', explanation: 'มี ว การันต์ (ว์) ต่อท้าย ไม่ออกเสียง', category: 'การันต์' },
+  { correct: 'ภาพยนตร์', wrong: ['ภาพยนต์', 'ภาพยนตร'], hint: 'หนังที่ฉายในโรง', explanation: 'ลงท้ายด้วย ตร์ (ร การันต์)', category: 'การันต์' },
+  { correct: 'ลายเซ็น', wrong: ['ลายเซ็นต์'], hint: 'ชื่อที่เขียนด้วยลายมือตนเองเพื่อรับรองเอกสาร', explanation: 'เซ็น สะกดด้วย น ไม่มี ต์ ต่อท้าย', category: 'การันต์' },
+
+  // ---------- ศ / ษ / ส ----------
+  { correct: 'ศึกษา', wrong: ['สึกษา', 'ศึกสา'], hint: 'เรียนรู้ เช่น ไป____หาความรู้ที่ห้องสมุด', explanation: 'ขึ้นต้นด้วย ศ ศาลา ตามด้วย ษ ฤๅษี', category: 'ศ/ษ/ส' },
+  { correct: 'อิสระ', wrong: ['อิสสระ', 'อิศระ'], hint: 'ไม่ขึ้นกับใคร เช่น นกบินได้อย่าง____', explanation: 'มี ส เสือ ตัวเดียว: อิด-สะ-หระ', category: 'ศ/ษ/ส' },
+  { correct: 'ศีรษะ', wrong: ['ศรีษะ', 'สีสะ'], hint: 'หัว (คำสุภาพ)', explanation: 'สระอี อยู่บน ศ ไม่ใช่บน ร: ศ-ี-ร-ษ-ะ', category: 'ศ/ษ/ส' },
+  { correct: 'โอกาส', wrong: ['โอกาศ', 'โอกาด'], hint: 'ช่วงเวลาที่เหมาะ เช่น ได้____ไปทัศนศึกษา', explanation: 'สะกดด้วย ส เสือ', category: 'ศ/ษ/ส' },
+  { correct: 'กระดาษ', wrong: ['กระดาด', 'กระดาศ'], hint: 'แผ่นบางๆ ใช้เขียนหนังสือ พับเป็นเครื่องบินได้', explanation: 'สะกดด้วย ษ ฤๅษี', category: 'ศ/ษ/ส' },
+  { correct: 'พิเศษ', wrong: ['พิเศส', 'พิเสษ'], hint: 'ไม่ธรรมดา เหนือกว่าปกติ เช่น ของขวัญชิ้นนี้____มาก', explanation: 'เศษ ขึ้นต้นด้วย ศ ศาลา และสะกดด้วย ษ ฤๅษี', category: 'ศ/ษ/ส' },
+  { correct: 'ประเทศ', wrong: ['ประเทษ', 'ประเทส'], hint: 'บ้านเมือง เช่น ไทยเป็น____ในทวีปเอเชีย', explanation: 'สะกดด้วย ศ ศาลา', category: 'ศ/ษ/ส' },
+  { correct: 'อากาศ', wrong: ['อากาษ', 'อากาส'], hint: 'สิ่งที่เราหายใจเข้าไป หรือความร้อนหนาวของวันนั้น', explanation: 'สะกดด้วย ศ ศาลา', category: 'ศ/ษ/ส' },
+  { correct: 'ภาษา', wrong: ['ภาสา', 'ภาศา'], hint: 'เสียงหรือตัวอักษรที่ใช้สื่อสาร เช่น ____ไทย', explanation: 'ใช้ ษ ฤๅษี: ภา-ษา', category: 'ศ/ษ/ส' },
+
+  // ---------- คำทั่วไปที่พบบ่อย ----------
+  { correct: 'กรุณา', wrong: ['กรุนา', 'กะรุณา'], hint: 'ความสงสารอยากช่วยเหลือ หรือใช้ขอร้องอย่างสุภาพ เช่น ____ปิดประตู', explanation: 'ก ควบ ร และใช้ ณ เณร: กะ-รุ-นา', category: 'คำทั่วไป' },
+  { correct: 'ตะกร้า', wrong: ['ตระกร้า'], hint: 'ภาชนะสาน มีหูหิ้ว ใช้ใส่ของตอนไปตลาด', explanation: 'พยางค์แรกเป็น ตะ ไม่มี ร', category: 'คำทั่วไป' },
+  { correct: 'ทะเล', wrong: ['ทเล', 'ทะเร'], hint: 'น้ำเค็มกว้างใหญ่ มีคลื่นและหาดทราย', explanation: 'มีสระอะหลัง ท: ทะ-เล และ เล ใช้ ล ลิง', category: 'คำทั่วไป' },
+  { correct: 'กะทันหัน', wrong: ['กระทันหัน'], hint: 'ทันทีทันใด ไม่ทันตั้งตัว เช่น ฝนตก____', explanation: 'พยางค์แรกเป็น กะ ไม่มี ร', category: 'คำทั่วไป' },
+  { correct: 'รับประทาน', wrong: ['รับปะทาน', 'รับประทาร'], hint: 'กิน (คำสุภาพ)', explanation: 'ประ มี ร ควบ และ ทาน สะกดด้วย น หนู', category: 'คำทั่วไป' },
+  { correct: 'อร่อย', wrong: ['อะหร่อย'], hint: 'รสชาติดี กินแล้วถูกปาก', explanation: 'ใช้ อ นำ ร: อร่อย ไม่ต้องมี ห และสระอะ', category: 'คำทั่วไป' },
+  { correct: 'ไอศกรีม', wrong: ['ไอศครีม', 'ไอสกรีม'], hint: 'ขนมหวานเย็นๆ ทำจากนม มีหลายรส', explanation: 'ไอศ-กรีม ใช้ ศ ศาลา และ ก ไก่ ไม่มี ค', category: 'คำทั่วไป' },
+  { correct: 'ปรารถนา', wrong: ['ปราถนา', 'ปรารถณา'], hint: 'ต้องการ อยากได้ เช่น ขอให้สมความ____', explanation: 'มี ร หลัง ปรา (ไม่ออกเสียง) และใช้ น หนู: ปรา-ร-ถนา', category: 'คำทั่วไป' },
+  { correct: 'กะเพรา', wrong: ['กระเพรา', 'กะเพา'], hint: 'ใบไม้กลิ่นหอม นิยมนำมาผัดกับหมูสับ', explanation: 'กะ ไม่มี ร ส่วน เพรา มี ร ควบ (กระเพาะ คืออวัยวะในท้อง)', category: 'คำทั่วไป' },
+  { correct: 'สะอาด', wrong: ['สอาด', 'สะอาร'], hint: 'ไม่สกปรก เช่น ล้างมือให้____', explanation: 'มีสระอะหลัง ส: สะ-อาด และสะกดด้วย ด เด็ก', category: 'คำทั่วไป' },
+  { correct: 'ทะเลาะ', wrong: ['ทเลาะ', 'ทะเราะ'], hint: 'โต้เถียงกันด้วยความโกรธ', explanation: 'ทะ มีสระอะ ส่วน เลาะ ใช้ ล ลิง', category: 'คำทั่วไป' },
+];
+
+// ความยาวสูงสุดของคำสำหรับภารกิจที่ 2 (นับทีละอักขระ รวมสระและวรรณยุกต์)
+const MISSION2_MAX_CHARS = 8;
+
+// ===== state.js =====
+// สถานะของเกม เก็บในหน่วยความจำเท่านั้น (ไม่ใช้ localStorage)
+// เมื่อเริ่มใหม่ให้เพื่อนคนต่อไป ข้อมูลทั้งหมดจะถูกล้าง
+
+const MISSION_NAMES = {
+  1: 'คนไหนคนถูก',
+  2: 'จับตัวอักษร',
+  3: 'นักสืบคำผิด',
+  review: 'ทบทวนคำที่ผิด',
+};
+
+function freshState() {
+  return {
+    name: '',
+    score: 0,
+    maxScore: 0,
+    currentMission: null, // 1 | 2 | 3 | 'review' | null
+    results: { 1: null, 2: null, 3: null }, // { correct, total }
+    notebook: [], // { mission, chosen, note, correct, explanation, category }
+  };
+}
+
+const state = freshState();
+
+function resetState() {
+  Object.assign(state, freshState());
+}
+
+function addScore(points, possible) {
+  state.score += points;
+  state.maxScore += possible;
+}
+
+/** บันทึกคำที่ตอบผิดลงสมุดทันที */
+function logMistake({ mission, chosen, note = '', word }) {
+  state.notebook.push({
+    mission,
+    chosen,
+    note,
+    correct: word.correct,
+    explanation: word.explanation,
+    category: word.category,
+  });
+}
+
+// ===== components/dom.js =====
+// ตัวช่วยสร้าง DOM แบบง่าย ใช้ textContent เสมอ (ป้องกันการแทรก HTML จากชื่อนักเรียน)
+
+function h(tag, props = {}, ...children) {
+  const el = document.createElement(tag);
+  for (const [key, value] of Object.entries(props || {})) {
+    if (value == null || value === false) continue;
+    if (key === 'class') el.className = value;
+    else if (key === 'style' && typeof value === 'object') Object.assign(el.style, value);
+    else if (key === 'html') el.innerHTML = value; // ใช้เฉพาะกับ SVG ที่เราเขียนเอง
+    else if (key.startsWith('on') && typeof value === 'function') el.addEventListener(key.slice(2).toLowerCase(), value);
+    else if (value === true) el.setAttribute(key, '');
+    else el.setAttribute(key, value);
+  }
+  for (const child of children.flat()) {
+    if (child == null || child === false) continue;
+    el.append(child instanceof Node ? child : document.createTextNode(String(child)));
+  }
+  return el;
+}
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+const pickOne = (arr) => arr[Math.floor(Math.random() * arr.length)];
+
+/** ชุดจุดความคืบหน้า ข้อที่ 1..n */
+function progressDots(total, index, results) {
+  return h(
+    'div',
+    { class: 'progress', 'aria-label': `ข้อที่ ${index + 1} จาก ${total}` },
+    h('span', { class: 'progress-text' }, `ข้อ ${index + 1}/${total}`),
+    h(
+      'div',
+      { class: 'dots' },
+      Array.from({ length: total }, (_, i) =>
+        h('span', {
+          class: `dot ${i === index ? 'now' : ''} ${results[i] === true ? 'ok' : ''} ${results[i] === false ? 'bad' : ''}`,
+        })
+      )
+    )
+  );
+}
+
+// ===== components/sound.js =====
+// เสียงประกอบแบบสังเคราะห์ด้วย Web Audio (ไม่ต้องโหลดไฟล์เสียง) เบาๆ ไม่รบกวน
+
+let ctx = null;
+let muted = false;
+const listeners = new Set();
+
+function audio() {
+  if (!ctx) {
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return null;
+    ctx = new AC();
+  }
+  if (ctx.state === 'suspended') ctx.resume();
+  return ctx;
+}
+
+function tone(freq, start, dur, { type = 'sine', vol = 0.08 } = {}) {
+  const ac = audio();
+  if (!ac || muted) return;
+  const t0 = ac.currentTime + start;
+  const osc = ac.createOscillator();
+  const gain = ac.createGain();
+  osc.type = type;
+  osc.frequency.setValueAtTime(freq, t0);
+  gain.gain.setValueAtTime(0.0001, t0);
+  gain.gain.exponentialRampToValueAtTime(vol, t0 + 0.02);
+  gain.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+  osc.connect(gain).connect(ac.destination);
+  osc.start(t0);
+  osc.stop(t0 + dur + 0.05);
+}
+
+const sfx = {
+  correct() {
+    tone(660, 0, 0.15);
+    tone(880, 0.1, 0.15);
+    tone(1175, 0.2, 0.25);
+  },
+  wrong() {
+    tone(330, 0, 0.18, { type: 'triangle', vol: 0.07 });
+    tone(247, 0.15, 0.28, { type: 'triangle', vol: 0.07 });
+  },
+  click() {
+    tone(520, 0, 0.06, { vol: 0.04 });
+  },
+  pick() {
+    tone(740, 0, 0.07, { type: 'triangle', vol: 0.05 });
+  },
+  drop() {
+    tone(440, 0, 0.08, { type: 'triangle', vol: 0.05 });
+  },
+  win() {
+    [523, 659, 784, 1047, 784, 1047].forEach((f, i) => tone(f, i * 0.12, 0.2));
+  },
+};
+
+const isMuted = () => muted;
+
+function setMuted(value) {
+  muted = value;
+  listeners.forEach((fn) => fn(muted));
+}
+
+function onMuteChange(fn) {
+  listeners.add(fn);
+  return () => listeners.delete(fn);
+}
+
+// ===== components/mascot.js =====
+// มาสคอต "ไข่เป็ดนักสืบ" วาดด้วย SVG (ออกแบบใหม่เอง)
+// mood: 'happy' | 'cheer' | 'encourage' | 'think'
+
+
+let uid = 0;
+
+const MOUTHS = {
+  happy: '<path d="M96 176 Q110 190 124 176" fill="none" stroke="#3a2a1f" stroke-width="4" stroke-linecap="round"/>',
+  cheer: '<path d="M94 172 Q110 200 126 172 Z" fill="#c9464a" stroke="#3a2a1f" stroke-width="3.5" stroke-linejoin="round"/><path d="M101 184 Q110 192 119 184" fill="#ff9aa2"/>',
+  encourage: '<path d="M98 180 Q110 186 122 178" fill="none" stroke="#3a2a1f" stroke-width="4" stroke-linecap="round"/>',
+  think: '<path d="M100 181 L120 177" fill="none" stroke="#3a2a1f" stroke-width="4" stroke-linecap="round"/>',
+};
+
+const BROWS = {
+  happy: '<path d="M70 104 Q84 98 98 104 M122 104 Q136 98 150 104" fill="none" stroke="#3a2a1f" stroke-width="4" stroke-linecap="round"/>',
+  cheer: '<path d="M70 100 Q84 92 98 100 M122 100 Q136 92 150 100" fill="none" stroke="#3a2a1f" stroke-width="4" stroke-linecap="round"/>',
+  encourage: '<path d="M72 100 Q84 104 98 106 M122 106 Q136 104 148 100" fill="none" stroke="#3a2a1f" stroke-width="4" stroke-linecap="round"/>',
+  think: '<path d="M70 106 L98 102 M122 98 Q136 92 150 100" fill="none" stroke="#3a2a1f" stroke-width="4" stroke-linecap="round"/>',
+};
+
+function mascotSVG(mood = 'happy') {
+  const id = `egg${++uid}`;
+  const mouth = MOUTHS[mood] || MOUTHS.happy;
+  const brows = BROWS[mood] || BROWS.happy;
+  const eyeY = mood === 'cheer' ? 130 : 132;
+  const eyes =
+    mood === 'cheer'
+      ? `<path d="M77 ${eyeY} Q85 122 93 ${eyeY} M127 ${eyeY} Q135 122 143 ${eyeY}" fill="none" stroke="#2b3a55" stroke-width="4.5" stroke-linecap="round"/>`
+      : `<circle cx="${mood === 'think' ? 89 : 85}" cy="${eyeY}" r="6.5" fill="#2b3a55"/><circle cx="${mood === 'think' ? 139 : 135}" cy="${eyeY}" r="6.5" fill="#2b3a55"/>
+         <circle cx="${mood === 'think' ? 91 : 87}" cy="${eyeY - 2}" r="2" fill="#fff"/><circle cx="${mood === 'think' ? 141 : 137}" cy="${eyeY - 2}" r="2" fill="#fff"/>`;
+
+  return `
+<svg viewBox="0 0 230 250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="ไข่เป็ดนักสืบ">
+  <defs>
+    <radialGradient id="${id}-g" cx="38%" cy="35%" r="75%">
+      <stop offset="0" stop-color="#f6fffb"/>
+      <stop offset="0.6" stop-color="#d4efe6"/>
+      <stop offset="1" stop-color="#a9d8c9"/>
+    </radialGradient>
+    <pattern id="${id}-p" width="16" height="16" patternUnits="userSpaceOnUse">
+      <rect width="16" height="16" fill="#c0874d"/>
+      <path d="M0 8H16M8 0V16" stroke="#8b5a2b" stroke-width="3.5"/>
+      <path d="M0 3H16M3 0V16" stroke="#f1c27d" stroke-width="1.2" opacity=".8"/>
+    </pattern>
+  </defs>
+  <ellipse cx="110" cy="240" rx="62" ry="7" fill="rgba(0,0,0,.13)"/>
+  <!-- ตัวไข่ -->
+  <path d="M110 42 C160 42 186 116 186 162 C186 210 152 236 110 236 C68 236 34 210 34 162 C34 116 60 42 110 42Z"
+        fill="url(#${id}-g)" stroke="#5f9c8e" stroke-width="3.5"/>
+  <circle cx="68" cy="196" r="4" fill="#9fcfc0"/><circle cx="150" cy="206" r="3" fill="#9fcfc0"/>
+  <circle cx="160" cy="150" r="2.5" fill="#9fcfc0"/><circle cx="60" cy="150" r="2.5" fill="#9fcfc0"/>
+  <!-- หมวกนักสืบ -->
+  <path d="M30 86 Q110 64 190 86 Q186 98 110 104 Q34 98 30 86Z" fill="#7a4c22"/>
+  <path d="M52 86 C50 36 170 36 168 86 Q110 96 52 86Z" fill="url(#${id}-p)" stroke="#6b421d" stroke-width="3"/>
+  <path d="M54 80 Q110 90 166 80" fill="none" stroke="#3a2a1f" stroke-width="7" opacity=".85"/>
+  <circle cx="110" cy="42" r="6" fill="#7a4c22"/>
+  <!-- คิ้ว -->
+  ${brows}
+  <!-- แว่น -->
+  <circle cx="85" cy="132" r="21" fill="rgba(255,255,255,.45)" stroke="#2b3a55" stroke-width="5"/>
+  <circle cx="135" cy="132" r="21" fill="rgba(255,255,255,.45)" stroke="#2b3a55" stroke-width="5"/>
+  <path d="M106 130 Q110 124 114 130" fill="none" stroke="#2b3a55" stroke-width="4.5"/>
+  <path d="M64 128 L44 122 M156 128 L174 122" stroke="#2b3a55" stroke-width="4" stroke-linecap="round"/>
+  ${eyes}
+  <!-- แก้ม -->
+  <ellipse cx="66" cy="164" rx="10" ry="6" fill="#ffb3b8" opacity=".75"/>
+  <ellipse cx="154" cy="164" rx="10" ry="6" fill="#ffb3b8" opacity=".75"/>
+  ${mouth}
+  <!-- แว่นขยาย -->
+  <g class="magnifier">
+    <path d="M186 200 L170 222" stroke="#6b421d" stroke-width="9" stroke-linecap="round"/>
+    <circle cx="198" cy="180" r="21" fill="rgba(170,225,255,.55)" stroke="#e8a33d" stroke-width="7"/>
+    <path d="M188 172 Q193 166 200 166" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <ellipse cx="174" cy="212" rx="11" ry="9" fill="#d4efe6" stroke="#5f9c8e" stroke-width="3"/>
+  </g>
+</svg>`;
+}
+
+/** มาสคอตพร้อมกล่องคำพูด */
+function mascotWithBubble(mood, text, { size = 'md' } = {}) {
+  return h(
+    'div',
+    { class: `mascot-row row-${size}` },
+    h('div', { class: `mascot mood-${mood}`, html: mascotSVG(mood) }),
+    text ? h('div', { class: 'bubble' }, text) : null
+  );
+}
+
+// ===== components/effects.js =====
+// เอฟเฟกต์ภาพ: ดาวกระจาย และพลุฉลอง
+
+const STAR_SVG =
+  '<svg viewBox="0 0 24 24"><path d="M12 1.8l3 6.4 7 .9-5.1 4.8 1.3 6.9L12 17.4 5.8 20.8l1.3-6.9L2 9.1l7-.9z"/></svg>';
+const COLORS = ['#ffcc33', '#ff8a3d', '#ff5d8f', '#4fc3f7', '#7ed957'];
+
+function layer() {
+  let el = document.getElementById('fx-layer');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'fx-layer';
+    document.body.append(el);
+  }
+  return el;
+}
+
+/** ดาวกระจายออกจากจุด (x, y) บนหน้าจอ หรือจากกลาง element */
+function burstStars(target, count = 14) {
+  let x, y;
+  if (target instanceof Element) {
+    const r = target.getBoundingClientRect();
+    x = r.left + r.width / 2;
+    y = r.top + r.height / 2;
+  } else ({ x, y } = target);
+  const fx = layer();
+  for (let i = 0; i < count; i++) {
+    const s = document.createElement('div');
+    s.className = 'fx-star';
+    s.innerHTML = STAR_SVG;
+    const angle = (Math.PI * 2 * i) / count + Math.random() * 0.4;
+    const dist = 70 + Math.random() * 90;
+    s.style.left = `${x}px`;
+    s.style.top = `${y}px`;
+    s.style.setProperty('--dx', `${Math.cos(angle) * dist}px`);
+    s.style.setProperty('--dy', `${Math.sin(angle) * dist}px`);
+    s.style.setProperty('--size', `${16 + Math.random() * 20}px`);
+    s.style.color = COLORS[i % COLORS.length];
+    fx.append(s);
+    setTimeout(() => s.remove(), 1000);
+  }
+}
+
+/** พลุกระดาษฉลองตอนจบเกม */
+function confetti(count = 60) {
+  const fx = layer();
+  for (let i = 0; i < count; i++) {
+    const c = document.createElement('div');
+    c.className = 'fx-confetti';
+    c.style.left = `${Math.random() * 100}vw`;
+    c.style.background = COLORS[i % COLORS.length];
+    c.style.animationDelay = `${Math.random() * 0.8}s`;
+    c.style.setProperty('--drift', `${(Math.random() - 0.5) * 200}px`);
+    fx.append(c);
+    setTimeout(() => c.remove(), 3500);
+  }
+}
+
+function clearEffects() {
+  document.getElementById('fx-layer')?.replaceChildren();
+}
+
+// ===== components/hud.js =====
+// แถบสถานะด้านบน: ชื่อนักสืบ คะแนน ดาวความคืบหน้า 3 ภารกิจ ปุ่มเสียง ปุ่มเริ่มใหม่
+
+
+
+
+let root = null;
+let onHome = null;
+
+function initHud(el, { onRequestHome }) {
+  root = el;
+  onHome = onRequestHome;
+  onMuteChange(updateHud);
+  updateHud();
+}
+
+function missionStar(n) {
+  const res = state.results[n];
+  const cur = state.currentMission === n;
+  const cls = res ? 'done' : cur ? 'current' : '';
+  return h(
+    'span',
+    { class: `hud-star ${cls}`, title: `ภารกิจที่ ${n}${res ? ' สำเร็จแล้ว' : ''}` },
+    res ? '★' : '☆',
+    h('small', {}, n)
+  );
+}
+
+function updateHud() {
+  if (!root) return;
+  const muteBtn = h(
+    'button',
+    {
+      class: 'hud-btn',
+      'aria-label': isMuted() ? 'เปิดเสียง' : 'ปิดเสียง',
+      title: isMuted() ? 'เปิดเสียง' : 'ปิดเสียง',
+      onClick: () => setMuted(!isMuted()),
+    },
+    isMuted() ? '🔇' : '🔊'
+  );
+  const inGame = Boolean(state.name);
+  root.replaceChildren(
+    h(
+      'div',
+      { class: 'hud-inner' },
+      h('div', { class: 'hud-left' }, h('span', { class: 'hud-logo' }, '🔍'), inGame ? h('span', { class: 'hud-name' }, `นักสืบ ${state.name}`) : h('span', { class: 'hud-name' }, 'ภารกิจนักสืบไข่เป็ดปริศนา')),
+      inGame
+        ? h(
+            'div',
+            { class: 'hud-mid' },
+            h('span', { class: 'hud-score' }, '🏅 ', h('b', {}, state.score), ' คะแนน'),
+            h('span', { class: 'hud-stars' }, [1, 2, 3].map(missionStar))
+          )
+        : null,
+      h(
+        'div',
+        { class: 'hud-right' },
+        muteBtn,
+        inGame ? h('button', { class: 'hud-btn', title: 'กลับหน้าแรก', 'aria-label': 'กลับหน้าแรก', onClick: () => onHome?.() }, '🏠') : null
+      )
+    )
+  );
+}
+
+// ===== components/feedback.js =====
+// กล่องผลลัพธ์หลังตอบ ใช้ร่วมกันทุกภารกิจ
+
+
+
+const CHEERS = ['เก่งมาก! ✨', 'ยอดเยี่ยม นักสืบ!', 'ถูกต้อง! สายตาคมมาก', 'เยี่ยมไปเลย!'];
+const ENCOURAGE = ['ไม่เป็นไรนะ ลองใหม่ข้อต่อไป', 'เกือบแล้ว! จำคำนี้ไว้นะ', 'นักสืบเก่งๆ ก็พลาดได้ สู้ๆ!', 'ไม่เป็นไร เรียนรู้ไปด้วยกัน'];
+
+const rand = (a) => a[Math.floor(Math.random() * a.length)];
+
+/**
+ * @param {object} o
+ * @param {boolean} o.ok        ตอบถูกหรือไม่
+ * @param {string}  [o.title]   หัวข้อ (ถ้าไม่ใส่จะสุ่มคำชม/คำให้กำลังใจ)
+ * @param {Node|string} [o.detail]
+ * @param {string}  o.correct   คำที่ถูกต้อง
+ * @param {string}  o.explanation
+ * @param {string}  o.nextLabel
+ * @param {Function} o.onNext
+ */
+function feedbackPanel({ ok, title, detail, correct, explanation, nextLabel = 'ข้อต่อไป ➜', onNext }) {
+  const btn = h('button', { class: 'btn btn-primary btn-next', onClick: onNext }, nextLabel);
+  const panel = h(
+    'div',
+    { class: `feedback ${ok ? 'is-ok' : 'is-bad'}`, role: 'status', 'aria-live': 'polite' },
+    h('div', { class: 'feedback-mascot mascot', html: mascotSVG(ok ? 'cheer' : 'encourage') }),
+    h(
+      'div',
+      { class: 'feedback-body' },
+      h('div', { class: 'feedback-title' }, title || (ok ? rand(CHEERS) : rand(ENCOURAGE))),
+      detail ? h('div', { class: 'feedback-detail' }, detail) : null,
+      h('div', { class: 'feedback-word' }, h('span', { class: 'label' }, 'คำที่ถูกต้อง'), h('b', {}, correct)),
+      h('div', { class: 'feedback-expl' }, '💡 ', explanation),
+      btn
+    )
+  );
+  requestAnimationFrame(() => {
+    panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    btn.focus({ preventScroll: true });
+  });
+  return panel;
+}
+
+// ===== components/notebook.js =====
+// สมุดบันทึกนักสืบ: ตารางคำที่ตอบผิดตลอดเกม
+
+
+
+
+function missionLabel(key) {
+  return key === 'review' ? MISSION_NAMES.review : `ภารกิจที่ ${key}: ${MISSION_NAMES[key]}`;
+}
+
+function renderNotebook() {
+  const entries = state.notebook;
+  const today = new Date().toLocaleDateString('th-TH', { dateStyle: 'long' });
+
+  const header = h(
+    'div',
+    { class: 'nb-header' },
+    h('h2', {}, '📒 สมุดบันทึกนักสืบ'),
+    h(
+      'div',
+      { class: 'nb-meta' },
+      h('span', {}, 'ชื่อนักสืบ: ', h('b', {}, state.name || '-')),
+      h('span', {}, 'วันที่: ', today),
+      h('span', {}, 'คะแนน: ', h('b', {}, `${state.score}/${state.maxScore}`))
+    )
+  );
+
+  let body;
+  if (!entries.length) {
+    body = h(
+      'div',
+      { class: 'nb-empty' },
+      h('div', { class: 'mascot mascot-md', html: mascotSVG('cheer') }),
+      h('p', { class: 'big' }, '🌟 ไม่มีคำผิดเลยสักคำ! 🌟'),
+      h('p', {}, `สุดยอดนักสืบ ${state.name}! สายตาคมกริบ สะกดคำได้ถูกต้องทุกคำ`)
+    );
+  } else {
+    body = h(
+      'div',
+      { class: 'nb-table-wrap' },
+      h('p', { class: 'nb-intro' }, `คำที่ควรทบทวน ${entries.length} รายการ — อ่านคำที่ถูกต้องออกเสียงดังๆ แล้วลองเขียนตามนะ ✍️`),
+      h(
+        'table',
+        { class: 'nb-table' },
+        h(
+          'thead',
+          {},
+          h('tr', {}, h('th', {}, '#'), h('th', {}, 'ภารกิจ'), h('th', {}, 'สิ่งที่นักเรียนเลือก/เขียน'), h('th', {}, 'คำที่ถูกต้อง'), h('th', {}, 'หลักการสะกด'))
+        ),
+        h(
+          'tbody',
+          {},
+          entries.map((e, i) =>
+            h(
+              'tr',
+              {},
+              h('td', { 'data-label': '#' }, i + 1),
+              h('td', { 'data-label': 'ภารกิจ' }, missionLabel(e.mission)),
+              h(
+                'td',
+                { 'data-label': 'นักเรียนเลือก/เขียน', class: 'nb-chosen' },
+                h('span', { class: 'strike' }, e.chosen),
+                e.note ? h('small', {}, e.note) : null
+              ),
+              h('td', { 'data-label': 'คำที่ถูกต้อง', class: 'nb-correct' }, e.correct),
+              h('td', { 'data-label': 'หลักการสะกด', class: 'nb-expl' }, h('span', { class: 'chip' }, e.category), ' ', e.explanation)
+            )
+          )
+        )
+      )
+    );
+  }
+
+  return h('div', { class: 'notebook' }, h('div', { class: 'nb-rings', 'aria-hidden': 'true' }), h('div', { class: 'nb-page' }, header, body));
+}
+
+// ===== hooks/useHandPinch.js =====
+// useHandPinch — ตรวจจับมือและท่า "จับ" (pinch) ด้วย MediaPipe Hand Landmarker
+// ----------------------------------------------------------------------------
+// - ประมวลผลภาพจากกล้องในเครื่องเท่านั้น ไม่มีการอัปโหลดภาพไปที่ใด
+// - โหลดไลบรารี/โมเดลจาก CDN (ดูค่าคงที่ด้านล่าง ถ้าต้องการเก็บไว้ในโปรเจกต์ให้ดู README)
+// - pinch = ระยะปลายนิ้วโป้ง (landmark 4) กับปลายนิ้วชี้ (landmark 8)
+//   เทียบกับขนาดมือ (ข้อมือ 0 -> โคนนิ้วกลาง 9) จึงใช้ได้ทั้งมือใกล้/ไกลกล้อง
+// - มี hysteresis (เกณฑ์เริ่มจับ < เกณฑ์ปล่อย) และ smoothing กันเคอร์เซอร์สั่น
+//
+// การใช้งาน:
+//   const hand = useHandPinch({ video, onFrame(hands) {...}, onStatus(s) {...} })
+//   await hand.start();  ...  hand.stop();
+//   hands = [{ key, x, y, pinching, justPinched, justReleased }]
+//   x, y เป็นค่า 0..1 ของภาพวิดีโอ โดย x กลับด้านแบบกระจกแล้ว
+// ----------------------------------------------------------------------------
+
+const VISION_VERSION = '0.10.14';
+const VISION_BASE = `https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@${VISION_VERSION}`;
+const HAND_MODEL_URL =
+  'https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task';
+
+const PINCH_ON = 0.3; // ระยะนิ้ว/ขนาดมือ ต่ำกว่านี้ = เริ่มจับ
+const PINCH_OFF = 0.45; // สูงกว่านี้ = ปล่อย
+const CONFIRM_FRAMES = 2; // ต้องเห็นสถานะใหม่ติดกันกี่เฟรมจึงเปลี่ยน (กันกะพริบ)
+const LOST_FRAMES = 6; // มือหายไปกี่เฟรมจึงถือว่าปล่อย
+
+let visionModulePromise = null;
+function loadVision() {
+  const url = `${VISION_BASE}/vision_bundle.mjs`;
+  visionModulePromise ??= import(/* @vite-ignore */ url);
+  return visionModulePromise;
+}
+
+async function createLandmarker(vision) {
+  const fileset = await vision.FilesetResolver.forVisionTasks(`${VISION_BASE}/wasm`);
+  const options = (delegate) => ({
+    baseOptions: { modelAssetPath: HAND_MODEL_URL, delegate },
+    runningMode: 'VIDEO',
+    numHands: 2,
+    minHandDetectionConfidence: 0.5,
+    minHandPresenceConfidence: 0.5,
+    minTrackingConfidence: 0.5,
+  });
+  try {
+    return await vision.HandLandmarker.createFromOptions(fileset, options('GPU'));
+  } catch (err) {
+    console.warn('GPU ใช้ไม่ได้ เปลี่ยนเป็น CPU', err);
+    return vision.HandLandmarker.createFromOptions(fileset, options('CPU'));
+  }
+}
+
+const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
+
+/**
+ * ตัวติดตามท่าจับแบบฟังก์ชันล้วน (ไม่แตะกล้อง) แยกออกมาเพื่อให้ทดสอบได้
+ * update(result, videoWidth, videoHeight) รับผลจาก HandLandmarker.detectForVideo
+ */
+function createPinchTracker() {
+  /** @type {Map<string, any>} */
+  const tracks = new Map();
+
+  function update(result, videoWidth, videoHeight) {
+    const vw = videoWidth || 1;
+    const vh = videoHeight || 1;
+    const seen = new Set();
+    const labelCount = {};
+
+    (result.landmarks || []).forEach((lm, i) => {
+      const label = result.handedness?.[i]?.[0]?.categoryName || 'Hand';
+      labelCount[label] = (labelCount[label] || 0) + 1;
+      const key = labelCount[label] > 1 ? `${label}${labelCount[label]}` : label;
+      seen.add(key);
+
+      // แปลงเป็นพิกเซลเพื่อให้ระยะไม่เพี้ยนตามสัดส่วนภาพ
+      const P = (p) => ({ x: p.x * vw, y: p.y * vh });
+      const thumb = P(lm[4]);
+      const index = P(lm[8]);
+      const handSize = Math.max(1, dist(P(lm[0]), P(lm[9])));
+      const ratio = dist(thumb, index) / handSize;
+
+      // จุดกึ่งกลางระหว่างนิ้วโป้งกับนิ้วชี้ (กลับด้านแบบกระจก)
+      const rawX = 1 - (lm[4].x + lm[8].x) / 2;
+      const rawY = (lm[4].y + lm[8].y) / 2;
+
+      let t = tracks.get(key);
+      if (!t) {
+        t = { key, x: rawX, y: rawY, ratio, pinching: false, pending: 0, lost: 0 };
+        tracks.set(key, t);
+      }
+      // smoothing แบบปรับตามความเร็ว: ขยับช้า = นิ่ง, ขยับเร็ว = ตามทัน
+      const speed = Math.hypot(rawX - t.x, rawY - t.y);
+      const alpha = Math.min(0.85, 0.25 + speed * 6);
+      t.x += (rawX - t.x) * alpha;
+      t.y += (rawY - t.y) * alpha;
+      t.ratio += (ratio - t.ratio) * 0.6;
+      t.lost = 0;
+
+      const want = t.pinching ? t.ratio < PINCH_OFF : t.ratio < PINCH_ON;
+      t.justPinched = false;
+      t.justReleased = false;
+      if (want !== t.pinching) {
+        t.pending++;
+        if (t.pending >= CONFIRM_FRAMES) {
+          t.pinching = want;
+          t.pending = 0;
+          if (want) t.justPinched = true;
+          else t.justReleased = true;
+        }
+      } else t.pending = 0;
+    });
+
+    // มือที่หายไป: ถ้าหายนานพอให้ถือว่าปล่อย
+    for (const [key, t] of tracks) {
+      if (seen.has(key)) continue;
+      t.lost++;
+      t.justPinched = false;
+      t.justReleased = false;
+      if (t.lost >= LOST_FRAMES) {
+        if (t.pinching) {
+          t.pinching = false;
+          t.justReleased = true;
+          t.gone = true;
+        } else tracks.delete(key);
+      }
+    }
+
+    const out = [];
+    for (const [key, t] of tracks) {
+      out.push({ key, x: t.x, y: t.y, pinching: t.pinching, justPinched: t.justPinched, justReleased: t.justReleased, visible: t.lost === 0 });
+      if (t.gone) tracks.delete(key);
+    }
+    return out;
+  }
+
+  return { update, reset: () => tracks.clear() };
+}
+
+function useHandPinch({ video, onFrame, onStatus = () => {} }) {
+  let landmarker = null;
+  let stream = null;
+  let rafId = 0;
+  let stopped = false;
+  let lastTime = -1;
+  const tracker = createPinchTracker();
+
+  function cleanupMedia() {
+    cancelAnimationFrame(rafId);
+    stream?.getTracks().forEach((t) => t.stop());
+    stream = null;
+    if (video) {
+      video.pause?.();
+      video.srcObject = null;
+    }
+    try {
+      landmarker?.close();
+    } catch {}
+    landmarker = null;
+  }
+
+  async function start() {
+    stopped = false;
+    if (!window.isSecureContext || !navigator.mediaDevices?.getUserMedia) {
+      throw new Error('เบราว์เซอร์นี้เปิดกล้องไม่ได้ ต้องเปิดผ่าน https:// หรือ localhost');
+    }
+    onStatus('loading');
+    // ขอกล้องและโหลดโมเดลพร้อมกัน
+    const camPromise = navigator.mediaDevices.getUserMedia({
+      video: { facingMode: 'user', width: { ideal: 1280 }, height: { ideal: 720 } },
+      audio: false,
+    });
+    const modelPromise = loadVision().then(createLandmarker);
+    try {
+      stream = await camPromise;
+      if (stopped) {
+        modelPromise.then((l) => l?.close?.()).catch(() => {});
+        return cleanupMedia();
+      }
+      video.srcObject = stream;
+      video.muted = true;
+      video.playsInline = true;
+      await video.play();
+      onStatus('camera-ready');
+      landmarker = await modelPromise;
+      if (stopped) return cleanupMedia();
+    } catch (err) {
+      cleanupMedia();
+      modelPromise.then((l) => l?.close?.()).catch(() => {});
+      throw err;
+    }
+    onStatus('running');
+    loop();
+  }
+
+  function loop() {
+    if (stopped || !landmarker) return;
+    rafId = requestAnimationFrame(loop);
+    if (video.readyState < 2 || video.currentTime === lastTime) return;
+    lastTime = video.currentTime;
+    let result;
+    try {
+      result = landmarker.detectForVideo(video, performance.now());
+    } catch (err) {
+      console.warn(err);
+      return;
+    }
+    onFrame(tracker.update(result, video.videoWidth, video.videoHeight));
+  }
+
+  function stop() {
+    stopped = true;
+    tracker.reset();
+    cleanupMedia();
+    onStatus('stopped');
+  }
+
+  return { start, stop };
+}
+
+// ===== missions/mission1.js =====
+// ภารกิจที่ 1: "คนไหนคนถูก" — เลือกคำที่เขียนถูกจาก 2 คำ
+
+
+
+
+
+
+
+
+const MISSION1_POINTS = 10;
+
+/**
+ * @param {HTMLElement} root
+ * @param {{ pool: object[], count?: number, onDone: Function, missionKey?: number|string, scoring?: boolean, title?: string }} opts
+ */
+function runMission1(root, { pool, count = 8, onDone, missionKey = 1, scoring = true, title = 'ภารกิจที่ 1: คนไหนคนถูก' }) {
+  const questions = shuffle(pool)
+    .slice(0, Math.min(count, pool.length))
+    .map((word) => {
+      const wrong = pickOne(word.wrong);
+      return { word, options: shuffle([word.correct, wrong]), wrong };
+    });
+  const results = [];
+  let index = 0;
+  let correctCount = 0;
+  let disposed = false;
+
+  function render() {
+    if (disposed) return;
+    const q = questions[index];
+    let answered = false;
+
+    const cards = q.options.map((text) =>
+      h(
+        'button',
+        {
+          class: 'word-card',
+          onClick: (e) => choose(text, e.currentTarget),
+        },
+        text
+      )
+    );
+    const feedbackSlot = h('div', { class: 'feedback-slot' });
+
+    function choose(text, el) {
+      if (answered) return;
+      answered = true;
+      const ok = text === q.word.correct;
+      cards.forEach((c) => {
+        c.disabled = true;
+        if (c.textContent === q.word.correct) c.classList.add('is-correct');
+      });
+      if (ok) {
+        correctCount++;
+        sfx.correct();
+        burstStars(el);
+      } else {
+        el.classList.add('is-wrong', 'shake');
+        sfx.wrong();
+        logMistake({ mission: missionKey, chosen: text, word: q.word });
+      }
+      results[index] = ok;
+      if (scoring) {
+        addScore(ok ? MISSION1_POINTS : 0, MISSION1_POINTS);
+        updateHud();
+      }
+      feedbackSlot.append(
+        feedbackPanel({
+          ok,
+          detail: ok ? null : h('span', {}, 'หนูเลือก ', h('s', {}, text), ' ซึ่งยังเขียนไม่ถูก'),
+          correct: q.word.correct,
+          explanation: q.word.explanation,
+          nextLabel: index + 1 < questions.length ? 'ข้อต่อไป ➜' : 'จบภารกิจ 🎉',
+          onNext: () => {
+            sfx.click();
+            index++;
+            if (index < questions.length) render();
+            else onDone({ correct: correctCount, total: questions.length });
+          },
+        })
+      );
+    }
+
+    root.replaceChildren(
+      h(
+        'section',
+        { class: 'mission mission1' },
+        h('h2', { class: 'mission-title' }, title),
+        progressDots(questions.length, index, results),
+        mascotWithBubble('think', 'คำไหนเขียนถูก? แตะเลือกเลย!'),
+        h('div', { class: 'card-row two' }, cards),
+        feedbackSlot
+      )
+    );
+  }
+
+  render();
+  return () => {
+    disposed = true;
+  };
+}
+
+// ===== missions/mission3.js =====
+// ภารกิจที่ 3: "นักสืบคำผิด" — 4 คำ มีคำเขียนผิด 1 คำ แตะจับคนร้าย!
+
+
+
+
+
+
+
+
+const MISSION3_POINTS = 10;
+
+function runMission3(root, { pool, count = 8, onDone }) {
+  const targets = shuffle(pool).slice(0, Math.min(count, pool.length));
+  const questions = targets.map((word) => {
+    const wrong = pickOne(word.wrong);
+    // คำถูกอีก 3 คำ ต้องไม่ซ้ำกับคำเป้าหมายหรือคำผิด
+    const others = shuffle(pool.filter((w) => w !== word && w.correct !== wrong))
+      .slice(0, 3)
+      .map((w) => w.correct);
+    return { word, wrong, options: shuffle([wrong, ...others]) };
+  });
+  const results = [];
+  let index = 0;
+  let correctCount = 0;
+  let disposed = false;
+
+  function render() {
+    if (disposed) return;
+    const q = questions[index];
+    let answered = false;
+    const feedbackSlot = h('div', { class: 'feedback-slot' });
+
+    const cards = q.options.map((text) =>
+      h(
+        'button',
+        { class: 'word-card suspect', 'data-word': text, onClick: (e) => choose(text, e.currentTarget) },
+        h('span', { class: 'suspect-tag' }, '👤 ผู้ต้องสงสัย'),
+        h('span', { class: 'suspect-word' }, text)
+      )
+    );
+
+    function choose(text, el) {
+      if (answered) return;
+      answered = true;
+      const ok = text === q.wrong;
+      const culprit = cards.find((c) => c.dataset.word === q.wrong);
+      cards.forEach((c) => (c.disabled = true));
+      culprit.classList.add('caught');
+      culprit.append(h('span', { class: 'caught-stamp' }, ok ? 'จับได้แล้ว!' : 'คนร้ายตัวจริง'));
+
+      if (ok) {
+        correctCount++;
+        sfx.correct();
+        burstStars(culprit, 18);
+      } else {
+        el.classList.add('is-innocent', 'shake');
+        sfx.wrong();
+        logMistake({
+          mission: 3,
+          chosen: text,
+          note: `คำนี้เขียนถูกแล้ว คำที่ผิดจริงคือ "${q.wrong}"`,
+          word: q.word,
+        });
+      }
+      results[index] = ok;
+      addScore(ok ? MISSION3_POINTS : 0, MISSION3_POINTS);
+      updateHud();
+
+      feedbackSlot.append(
+        feedbackPanel({
+          ok,
+          title: ok ? '🚨 จับคนร้ายได้แล้ว! เก่งมาก' : undefined,
+          detail: ok
+            ? h('span', {}, 'คำว่า ', h('s', {}, q.wrong), ' เขียนผิด')
+            : h('span', {}, 'คำว่า "', text, '" เขียนถูกแล้วนะ คนร้ายตัวจริงคือ ', h('s', {}, q.wrong)),
+          correct: q.word.correct,
+          explanation: q.word.explanation,
+          nextLabel: index + 1 < questions.length ? 'คดีต่อไป ➜' : 'ปิดคดี 🎉',
+          onNext: () => {
+            sfx.click();
+            index++;
+            if (index < questions.length) render();
+            else onDone({ correct: correctCount, total: questions.length });
+          },
+        })
+      );
+    }
+
+    root.replaceChildren(
+      h(
+        'section',
+        { class: 'mission mission3' },
+        h('h2', { class: 'mission-title' }, 'ภารกิจที่ 3: นักสืบคำผิด'),
+        progressDots(questions.length, index, results),
+        mascotWithBubble('think', 'มีคำเขียนผิดแฝงตัวอยู่ 1 คำ! แตะเพื่อจับตัวคนร้าย'),
+        h('div', { class: 'card-row four' }, cards),
+        feedbackSlot
+      )
+    );
+  }
+
+  render();
+  return () => {
+    disposed = true;
+  };
+}
+
+// ===== missions/mission2.js =====
+// ภารกิจที่ 2: "จับตัวอักษร" — หยิบตัวอักษรไปวางในช่องให้เรียงเป็นคำที่เขียนถูก
+// ควบคุมได้ 2 แบบ: ท่าจับ (pinch) ผ่านกล้อง หรือ เมาส์/นิ้วสัมผัสลากวาง
+
+
+
+
+
+
+
+
+
+
+
+const MISSION2_POINTS = 20;
+
+const PRIVACY_TEXT = 'ภาพจากกล้องประมวลผลในเครื่องนี้เท่านั้น ไม่มีการบันทึกหรืออัปโหลดภาพไปที่ใด';
+
+const cameraSupported = () => Boolean(window.isSecureContext && navigator.mediaDevices?.getUserMedia);
+
+function cameraErrorText(err) {
+  switch (err?.name) {
+    case 'NotAllowedError':
+    case 'SecurityError':
+      return 'ไม่ได้รับอนุญาตให้ใช้กล้อง (กดอนุญาตที่แถบที่อยู่ของเบราว์เซอร์ แล้วลองใหม่)';
+    case 'NotFoundError':
+    case 'OverconstrainedError':
+      return 'ไม่พบกล้องในเครื่องนี้';
+    case 'NotReadableError':
+      return 'กล้องกำลังถูกใช้งานโดยโปรแกรมอื่น ลองปิดโปรแกรมนั้นก่อน';
+    default:
+      return err?.message?.includes('https')
+        ? err.message
+        : 'โหลดตัวตรวจจับมือไม่สำเร็จ (ตรวจสอบการเชื่อมต่ออินเทอร์เน็ต)';
+  }
+}
+
+/** แสดงคำใบ้ โดยแทน ____ ด้วยช่องว่างสีเด่น */
+function renderHint(text) {
+  const parts = text.split('____');
+  const out = [];
+  parts.forEach((p, i) => {
+    out.push(p);
+    if (i < parts.length - 1) out.push(h('span', { class: 'blank' }, '？'));
+  });
+  return out;
+}
+
+function runMission2(root, { pool, count = 5, onDone, createHandSource = useHandPinch }) {
+  const eligible = pool.filter((w) => {
+    const n = charCount(w.correct);
+    return n >= 3 && n <= MISSION2_MAX_CHARS;
+  });
+  const questions = shuffle(eligible).slice(0, Math.min(count, eligible.length));
+
+  let disposed = false;
+  let hand = null;
+  let mode = 'pointer'; // 'camera' | 'pointer'
+  let index = 0;
+  let correctCount = 0;
+  const results = [];
+
+  // องค์ประกอบของด่าน
+  let stage, videoEl, tileLayer, cursorLayer, overlay, slotsRow, tray, hintEl, progressEl, previewEl, checkBtn, statusEl, modeBtn;
+  let tiles = [];
+  let slots = [];
+  let locked = false;
+  const cursors = new Map();
+  let resizeObs = null;
+
+  showIntro();
+
+  // ------------------------------------------------------------------ intro
+  function showIntro() {
+    const camOk = cameraSupported();
+    root.replaceChildren(
+      h(
+        'section',
+        { class: 'mission mission2-intro' },
+        h('h2', { class: 'mission-title' }, 'ภารกิจที่ 2: จับตัวอักษร'),
+        mascotWithBubble('happy', 'อ่านคำใบ้ แล้วหยิบตัวอักษรมาเรียงเป็นคำที่เขียนถูกนะ!'),
+        h(
+          'div',
+          { class: 'howto-grid' },
+          h(
+            'div',
+            { class: 'howto-card' },
+            h('h3', {}, '📷 เล่นด้วยกล้อง (ใช้มือ)'),
+            h(
+              'ol',
+              {},
+              h('li', {}, 'นั่งห่างจอประมาณ 1 ช่วงแขน ให้กล้องเห็นมือชัดๆ'),
+              h('li', {}, 'ทำนิ้วโป้งกับนิ้วชี้ประกบกัน 🤏 ใกล้ตัวอักษร เพื่อ "หยิบ"'),
+              h('li', {}, 'ขยับมือไปที่ช่อง แล้วแยกนิ้วออก เพื่อ "ปล่อย"'),
+              h('li', {}, 'จับ 🤏 ที่ปุ่มเพื่อกดปุ่มได้ด้วย'),
+              h('li', {}, 'วงกลมสีฟ้า = ตำแหน่งนิ้ว เปลี่ยนเป็นสีส้มเมื่อกำลังหยิบ')
+            )
+          ),
+          h(
+            'div',
+            { class: 'howto-card' },
+            h('h3', {}, '🖱️ เล่นด้วยเมาส์ / นิ้วสัมผัส'),
+            h(
+              'ol',
+              {},
+              h('li', {}, 'ลากตัวอักษรไปวางในช่อง'),
+              h('li', {}, 'หรือแตะตัวอักษร เพื่อใส่ลงช่องว่างถัดไป'),
+              h('li', {}, 'แตะตัวอักษรที่อยู่ในช่อง เพื่อนำออก')
+            )
+          )
+        ),
+        h('p', { class: 'note' }, 'สระบน สระล่าง และวรรณยุกต์ แยกเป็นตัวของมันเอง 1 ตัวต่อ 1 ช่อง (แสดงบนตัว อ สีจาง)'),
+        h('p', { class: 'privacy' }, '🔒 ', PRIVACY_TEXT),
+        !camOk ? h('p', { class: 'warn' }, '⚠️ เบราว์เซอร์นี้เปิดกล้องไม่ได้ (ต้องเปิดผ่าน https:// หรือ localhost) ใช้โหมดเมาส์/นิ้วสัมผัสได้เลย') : null,
+        h(
+          'div',
+          { class: 'btn-row' },
+          h('button', { class: 'btn btn-primary btn-big', disabled: !camOk, onClick: () => begin('camera') }, '📷 เล่นด้วยกล้อง'),
+          h('button', { class: 'btn btn-secondary btn-big', onClick: () => begin('pointer') }, '🖱️ เล่นด้วยเมาส์/สัมผัส')
+        )
+      )
+    );
+  }
+
+  function begin(wanted) {
+    sfx.click();
+    buildStage();
+    loadQuestion(0);
+    if (wanted === 'camera') startCamera();
+    else setMode('pointer');
+  }
+
+  // ------------------------------------------------------------------ stage
+  function buildStage() {
+    videoEl = h('video', { class: 'm2-video', playsinline: true, muted: true, autoplay: true });
+    tileLayer = h('div', { class: 'm2-tiles' });
+    cursorLayer = h('div', { class: 'm2-cursors' });
+    overlay = h('div', { class: 'm2-overlay', hidden: true });
+    progressEl = h('div', { class: 'm2-progress' });
+    hintEl = h('div', { class: 'hint-card' });
+    slotsRow = h('div', { class: 'slots' });
+    previewEl = h('div', { class: 'preview' });
+    tray = h('div', { class: 'tray' });
+    statusEl = h('div', { class: 'm2-status' });
+    modeBtn = h('button', { class: 'btn btn-small', onClick: toggleMode }, '');
+    checkBtn = h('button', { class: 'btn btn-primary btn-big', disabled: true, onClick: checkAnswer }, '🔎 ตรวจคำตอบ');
+
+    stage = h(
+      'section',
+      { class: 'm2-stage' },
+      videoEl,
+      h('div', { class: 'm2-veil' }),
+      h(
+        'div',
+        { class: 'm2-content' },
+        h('div', { class: 'm2-top' }, h('h2', { class: 'mission-title small' }, 'ภารกิจที่ 2: จับตัวอักษร'), modeBtn),
+        progressEl,
+        hintEl,
+        slotsRow,
+        previewEl,
+        tray,
+        h(
+          'div',
+          { class: 'btn-row' },
+          h('button', { class: 'btn btn-secondary', onClick: clearSlots }, '↩️ ล้างช่อง'),
+          checkBtn
+        ),
+        h('div', { class: 'm2-footer' }, statusEl, h('span', { class: 'privacy small' }, '🔒 ', PRIVACY_TEXT))
+      ),
+      tileLayer,
+      cursorLayer,
+      overlay
+    );
+    root.replaceChildren(stage);
+
+    resizeObs = new ResizeObserver(() => layout());
+    resizeObs.observe(stage);
+  }
+
+  function setMode(m) {
+    mode = m;
+    stage.classList.toggle('camera-on', m === 'camera');
+    modeBtn.textContent = m === 'camera' ? '🖱️ เปลี่ยนเป็นเมาส์/สัมผัส' : '📷 เปิดกล้อง';
+    modeBtn.disabled = m === 'pointer' && !cameraSupported();
+    if (m === 'pointer') {
+      clearCursors();
+      statusEl.textContent = '🖱️ โหมดเมาส์/นิ้วสัมผัส: ลากหรือแตะตัวอักษร';
+    }
+  }
+
+  function toggleMode() {
+    sfx.click();
+    if (mode === 'camera') {
+      stopCamera();
+      setMode('pointer');
+    } else startCamera();
+  }
+
+  function showOverlay(...content) {
+    overlay.replaceChildren(h('div', { class: 'm2-overlay-card' }, ...content));
+    overlay.hidden = false;
+  }
+  function hideOverlay() {
+    overlay.hidden = true;
+    overlay.replaceChildren();
+  }
+
+  async function startCamera() {
+    if (hand) return;
+    showOverlay(
+      h('div', { class: 'spinner' }),
+      h('p', { class: 'big' }, 'กำลังเปิดกล้องและโหลดตัวตรวจจับมือ...'),
+      h('p', {}, 'ครั้งแรกอาจใช้เวลาสักครู่ ถ้าเบราว์เซอร์ถาม ให้กด "อนุญาต"'),
+      h('p', { class: 'privacy' }, '🔒 ', PRIVACY_TEXT),
+      h('button', { class: 'btn btn-secondary', onClick: () => { stopCamera(); setMode('pointer'); hideOverlay(); } }, 'ใช้เมาส์/สัมผัสแทน')
+    );
+    const thisHand = createHandSource({
+      video: videoEl,
+      onFrame: handleHands,
+      onStatus: (s) => {
+        if (s === 'camera-ready') stage.classList.add('camera-on');
+      },
+    });
+    hand = thisHand;
+    try {
+      await thisHand.start();
+      if (disposed || hand !== thisHand) return;
+      setMode('camera');
+      statusEl.textContent = '✋ ยกมือให้กล้องเห็น';
+      if (!locked) hideOverlay();
+    } catch (err) {
+      console.warn(err);
+      if (disposed || hand !== thisHand) return;
+      hand = null;
+      stage.classList.remove('camera-on');
+      setMode('pointer');
+      showOverlay(
+        h('p', { class: 'big' }, '😅 เปิดกล้องไม่ได้'),
+        h('p', {}, cameraErrorText(err)),
+        h('p', {}, 'ไม่เป็นไร! เล่นต่อด้วยเมาส์หรือนิ้วสัมผัสได้เลย'),
+        h('button', { class: 'btn btn-primary', onClick: hideOverlay }, 'ตกลง เล่นต่อ')
+      );
+    }
+  }
+
+  function stopCamera() {
+    const hd = hand;
+    hand = null;
+    hd?.stop();
+    stage?.classList.remove('camera-on');
+    clearCursors();
+  }
+
+  // --------------------------------------------------------------- question
+  function loadQuestion(i) {
+    index = i;
+    locked = false;
+    const word = questions[i];
+    const chars = splitThaiChars(word.correct);
+    let order = shuffle(chars.map((_, k) => k));
+    for (let tries = 0; tries < 10 && order.every((v, k) => v === k); tries++) order = shuffle(order);
+
+    progressEl.replaceChildren(progressDots(questions.length, i, results));
+    hintEl.replaceChildren(
+      h('div', { class: 'hint-label' }, '🕵️ คำใบ้'),
+      h('div', { class: 'hint-text' }, renderHint(word.hint)),
+      h('div', { class: 'hint-sub' }, `เรียงตัวอักษร ${chars.length} ตัว ให้เป็นคำที่เขียนถูก`)
+    );
+
+    slots = chars.map(() => ({ el: h('div', { class: 'slot' }), tile: null, cx: 0, cy: 0 }));
+    slotsRow.replaceChildren(...slots.map((s) => s.el));
+
+    tiles.forEach((t) => t.el.remove());
+    tiles = order.map((charIdx, k) => {
+      const ch = chars[charIdx];
+      const { ghost, mark } = displayParts(ch);
+      const el = h(
+        'div',
+        { class: `tile ${ghost ? 'combining' : ''}`, role: 'button', 'aria-label': `ตัวอักษร ${ch}` },
+        ghost ? h('span', { class: 'ghost' }, ghost) : null,
+        h('span', { class: 'mark' }, mark)
+      );
+      const t = { id: k, ch, el, home: { x: 0, y: 0 }, pos: { x: 0, y: 0 }, slot: null, holder: null, prevSlot: null };
+      bindPointer(t);
+      tileLayer.append(el);
+      return t;
+    });
+    cursors.forEach((c) => (c.tile = null));
+    tray.style.setProperty('--rows', String(Math.ceil(chars.length / 4)));
+    updateUI();
+    layout(true);
+    requestAnimationFrame(() => layout());
+  }
+
+  function tileSize() {
+    return tiles[0]?.el.offsetWidth || 64;
+  }
+
+  function measureSlots() {
+    const sr = stage.getBoundingClientRect();
+    for (const s of slots) {
+      const r = s.el.getBoundingClientRect();
+      s.cx = r.left - sr.left + r.width / 2;
+      s.cy = r.top - sr.top + r.height / 2;
+    }
+    return sr;
+  }
+
+  function layout(instant = false) {
+    if (!stage || !tiles.length) return;
+    const sr = measureSlots();
+    const tr = tray.getBoundingClientRect();
+    const size = tileSize();
+    const gap = size * 0.3;
+    const n = tiles.length;
+    const cols = Math.max(1, Math.min(n, Math.floor((tr.width + gap) / (size + gap))));
+    const rows = Math.ceil(n / cols);
+    tiles.forEach((t, k) => {
+      const row = Math.floor(k / cols);
+      const col = k % cols;
+      const inRow = row === rows - 1 ? n - row * cols : cols;
+      const rowW = inRow * size + (inRow - 1) * gap;
+      t.home = {
+        x: tr.left - sr.left + (tr.width - rowW) / 2 + size / 2 + col * (size + gap),
+        y: tr.top - sr.top + size / 2 + gap / 2 + row * (size + gap),
+      };
+    });
+    for (const t of tiles) {
+      if (t.holder) continue;
+      if (instant) t.el.classList.add('no-anim');
+      setPos(t, t.slot != null ? { x: slots[t.slot].cx, y: slots[t.slot].cy } : t.home);
+      if (instant) setTimeout(() => t.el.classList.remove('no-anim'), 50);
+    }
+  }
+
+  function setPos(t, p) {
+    t.pos = { x: p.x, y: p.y };
+    const half = tileSize() / 2;
+    t.el.style.transform = `translate(${p.x - half}px, ${p.y - half}px)`;
+  }
+
+  const slotPos = (k) => ({ x: slots[k].cx, y: slots[k].cy });
+
+  // ------------------------------------------------------------ grab / drop
+  function grab(t, who) {
+    if (locked || t.holder) return false;
+    t.holder = who;
+    t.prevSlot = t.slot;
+    if (t.slot != null) {
+      slots[t.slot].tile = null;
+      t.slot = null;
+    }
+    t.el.classList.add('held');
+    sfx.pick();
+    updateUI();
+    return true;
+  }
+
+  function putInSlot(t, k) {
+    t.slot = k;
+    slots[k].tile = t;
+    setPos(t, slotPos(k));
+  }
+
+  function sendHome(t) {
+    t.slot = null;
+    setPos(t, t.home);
+  }
+
+  function release(t) {
+    if (!t.holder) return;
+    t.holder = null;
+    t.el.classList.remove('held');
+    measureSlots();
+    const size = tileSize();
+    let best = -1;
+    let bestD = Infinity;
+    slots.forEach((s, k) => {
+      const d = Math.hypot(s.cx - t.pos.x, s.cy - t.pos.y);
+      if (d < bestD) {
+        bestD = d;
+        best = k;
+      }
+    });
+    if (best >= 0 && bestD < size * 0.95 && !locked) {
+      const occupant = slots[best].tile;
+      if (occupant && occupant !== t && !occupant.holder) {
+        // สลับที่: ตัวเดิมย้ายไปช่องที่เราหยิบมา หรือกลับที่เดิม
+        if (t.prevSlot != null && !slots[t.prevSlot].tile) putInSlot(occupant, t.prevSlot);
+        else sendHome(occupant);
+      }
+      putInSlot(t, best);
+      sfx.drop();
+    } else sendHome(t);
+    t.prevSlot = null;
+    updateUI();
+  }
+
+  /** แตะ (ไม่ได้ลาก): ถ้าอยู่ในช่องให้นำออก ถ้าอยู่ในถาดให้ใส่ช่องว่างถัดไป */
+  function tap(t) {
+    t.holder = null;
+    t.el.classList.remove('held');
+    if (t.prevSlot != null) sendHome(t);
+    else {
+      const k = slots.findIndex((s) => !s.tile);
+      if (k >= 0) {
+        putInSlot(t, k);
+        sfx.drop();
+      } else sendHome(t);
+    }
+    t.prevSlot = null;
+    updateUI();
+  }
+
+  function toLocal(clientX, clientY) {
+    const sr = stage.getBoundingClientRect();
+    return { x: clientX - sr.left, y: clientY - sr.top };
+  }
+
+  function bindPointer(t) {
+    t.el.addEventListener('pointerdown', (e) => {
+      if (locked || t.holder) return;
+      e.preventDefault();
+      try {
+        t.el.setPointerCapture(e.pointerId);
+      } catch {}
+      const start = { x: e.clientX, y: e.clientY };
+      let moved = false;
+      if (!grab(t, 'pointer')) return;
+      const move = (ev) => {
+        if (!moved && Math.hypot(ev.clientX - start.x, ev.clientY - start.y) > 8) moved = true;
+        if (moved) setPos(t, toLocal(ev.clientX, ev.clientY));
+      };
+      const up = () => {
+        t.el.removeEventListener('pointermove', move);
+        t.el.removeEventListener('pointerup', up);
+        t.el.removeEventListener('pointercancel', up);
+        if (t.holder !== 'pointer') return;
+        if (moved) release(t);
+        else tap(t);
+      };
+      t.el.addEventListener('pointermove', move);
+      t.el.addEventListener('pointerup', up);
+      t.el.addEventListener('pointercancel', up);
+    });
+  }
+
+  function clearSlots() {
+    if (locked) return;
+    sfx.click();
+    tiles.forEach((t) => !t.holder && sendHome(t));
+    slots.forEach((s) => (s.tile = null));
+    updateUI();
+  }
+
+  function updateUI() {
+    const full = slots.every((s) => s.tile);
+    checkBtn.disabled = !full || locked;
+    slots.forEach((s) => s.el.classList.toggle('filled', Boolean(s.tile)));
+    const text = slots.map((s) => s.tile?.ch ?? '').join('');
+    previewEl.replaceChildren(h('span', { class: 'label' }, 'คำที่เรียงได้: '), h('b', {}, text || '—'));
+  }
+
+  // ------------------------------------------------------------- hand input
+  function clearCursors() {
+    cursors.forEach((c) => {
+      if (c.tile) release(c.tile);
+      c.el.remove();
+    });
+    cursors.clear();
+    tiles.forEach((t) => t.el.classList.remove('hover'));
+    stage?.querySelectorAll('.hand-hover').forEach((b) => b.classList.remove('hand-hover'));
+  }
+
+  function nearestTile(p, radius) {
+    let best = null;
+    let bestD = radius;
+    for (const t of tiles) {
+      if (t.holder) continue;
+      const d = Math.hypot(t.pos.x - p.x, t.pos.y - p.y);
+      if (d < bestD) {
+        bestD = d;
+        best = t;
+      }
+    }
+    return best;
+  }
+
+  function buttonAt(p) {
+    const sr = stage.getBoundingClientRect();
+    const el = document.elementFromPoint(sr.left + p.x, sr.top + p.y);
+    const btn = el?.closest?.('button');
+    return btn && stage.contains(btn) && !btn.disabled ? btn : null;
+  }
+
+  function handleHands(hands) {
+    if (disposed || mode !== 'camera' || !stage) return;
+    const sr = stage.getBoundingClientRect();
+    const vw = videoEl.videoWidth || 16;
+    const vh = videoEl.videoHeight || 9;
+    // วิดีโอแสดงแบบ object-fit: cover จึงต้องคำนวณส่วนที่ถูกครอป
+    const scale = Math.max(sr.width / vw, sr.height / vh);
+    const dispW = vw * scale;
+    const dispH = vh * scale;
+    const offX = (sr.width - dispW) / 2;
+    const offY = (sr.height - dispH) / 2;
+    const radius = tileSize() * 0.95;
+
+    const keys = new Set();
+    const hoverTiles = new Set();
+    const hoverBtns = new Set();
+    let visibleCount = 0;
+
+    for (const hd of hands) {
+      keys.add(hd.key);
+      const p = { x: offX + hd.x * dispW, y: offY + hd.y * dispH };
+      let c = cursors.get(hd.key);
+      if (!c) {
+        c = { el: h('div', { class: 'hand-cursor' }), tile: null };
+        cursorLayer.append(c.el);
+        cursors.set(hd.key, c);
+      }
+      if (hd.visible) visibleCount++;
+      c.el.style.transform = `translate(${p.x}px, ${p.y}px)`;
+      c.el.classList.toggle('pinching', hd.pinching);
+      c.el.classList.toggle('lost', !hd.visible);
+
+      if (hd.justPinched) {
+        const t = !locked ? nearestTile(p, radius) : null;
+        if (t && grab(t, hd.key)) c.tile = t;
+        else {
+          const btn = buttonAt(p);
+          if (btn) {
+            btn.classList.add('hand-press');
+            setTimeout(() => btn.classList.remove('hand-press'), 200);
+            btn.click();
+            if (disposed || !hand) return;
+          }
+        }
+      }
+      if (c.tile && hd.pinching) setPos(c.tile, p);
+      if (hd.justReleased && c.tile) {
+        const t = c.tile;
+        c.tile = null;
+        release(t);
+      }
+      if (!hd.pinching) {
+        const t = !locked ? nearestTile(p, radius) : null;
+        if (t) hoverTiles.add(t);
+        else {
+          const btn = buttonAt(p);
+          if (btn) hoverBtns.add(btn);
+        }
+      }
+    }
+    for (const [key, c] of cursors) {
+      if (keys.has(key)) continue;
+      if (c.tile) release(c.tile);
+      c.el.remove();
+      cursors.delete(key);
+    }
+    tiles.forEach((t) => t.el.classList.toggle('hover', hoverTiles.has(t)));
+    stage.querySelectorAll('button').forEach((b) => b.classList.toggle('hand-hover', hoverBtns.has(b)));
+    statusEl.textContent = visibleCount ? `✋ พบมือ ${visibleCount} ข้าง — ทำ 🤏 เพื่อหยิบ` : '🙋 มองไม่เห็นมือ ยกมือให้กล้องเห็น';
+  }
+
+  // ---------------------------------------------------------------- answer
+  function checkAnswer() {
+    if (locked || !slots.every((s) => s.tile)) return;
+    locked = true;
+    // ปล่อยตัวอักษรที่ค้างอยู่ในมือ
+    cursors.forEach((c) => (c.tile = null));
+    const word = questions[index];
+    const answer = slots.map((s) => s.tile.ch).join('').normalize('NFC');
+    const ok = answer === word.correct.normalize('NFC');
+    results[index] = ok;
+    slots.forEach((s, k) => {
+      const right = s.tile.ch === splitThaiChars(word.correct)[k];
+      s.el.classList.add(right ? 'slot-ok' : 'slot-bad');
+    });
+    tiles.forEach((t) => t.el.classList.add('locked'));
+    updateUI();
+
+    if (ok) {
+      correctCount++;
+      sfx.correct();
+      burstStars(slotsRow, 18);
+    } else {
+      sfx.wrong();
+      logMistake({ mission: 2, chosen: answer, note: 'คำที่เรียงมา', word });
+    }
+    addScore(ok ? MISSION2_POINTS : 0, MISSION2_POINTS);
+    updateHud();
+    progressEl.replaceChildren(progressDots(questions.length, index, results));
+
+    const last = index + 1 >= questions.length;
+    setTimeout(() => {
+      if (disposed) return;
+      overlay.replaceChildren(
+        feedbackPanel({
+          ok,
+          detail: ok ? null : h('span', {}, 'หนูเรียงได้ว่า ', h('s', {}, answer)),
+          correct: word.correct,
+          explanation: word.explanation,
+          nextLabel: last ? 'จบภารกิจ 🎉' : 'ข้อต่อไป ➜',
+          onNext: next,
+        })
+      );
+      overlay.hidden = false;
+    }, ok ? 700 : 400);
+  }
+
+  function next() {
+    sfx.click();
+    hideOverlay();
+    if (index + 1 < questions.length) loadQuestion(index + 1);
+    else {
+      stopCamera(); // ปิดกล้องทันทีเมื่อจบด่าน
+      onDone({ correct: correctCount, total: questions.length });
+    }
+  }
+
+  // --------------------------------------------------------------- cleanup
+  return () => {
+    disposed = true;
+    stopCamera();
+    resizeObs?.disconnect();
+  };
+}
+
+// ===== main.js =====
+// จุดเริ่มต้นของเกม: จัดลำดับหน้าจอ หน้าแรก → ภารกิจ 1 → 2 → 3 → สรุปผล/สมุดบันทึก
+
+
+
+
+
+
+
+
+
+
+
+
+const app = document.getElementById('app');
+let cleanup = null;
+
+/** เปลี่ยนหน้าจอ: เรียก cleanup ของหน้าก่อนหน้า (เช่น ปิดกล้อง) เสมอ */
+function mount(render) {
+  try {
+    cleanup?.();
+  } finally {
+    cleanup = null;
+  }
+  clearEffects();
+  app.replaceChildren();
+  window.scrollTo({ top: 0 });
+  const result = render(app);
+  if (typeof result === 'function') cleanup = result;
+  updateHud();
+}
+
+// ------------------------------------------------------------------ หน้าแรก
+function showHome() {
+  state.currentMission = null;
+  mount((root) => {
+    const input = h('input', {
+      id: 'player-name',
+      class: 'name-input',
+      type: 'text',
+      maxlength: '30',
+      autocomplete: 'off',
+      placeholder: 'พิมพ์ชื่อของหนูที่นี่',
+      'aria-label': 'ชื่อนักเรียน',
+    });
+    const err = h('p', { class: 'error', role: 'alert' });
+    const start = () => {
+      const name = input.value.trim();
+      if (!name) {
+        err.textContent = 'กรุณากรอกชื่อก่อนเริ่มภารกิจนะ 😊';
+        input.focus();
+        return;
+      }
+      sfx.click();
+      state.name = name;
+      showMissionIntro(1);
+    };
+    input.addEventListener('keydown', (e) => e.key === 'Enter' && start());
+
+    root.append(
+      h(
+        'section',
+        { class: 'home' },
+        h('div', { class: 'home-badge' }, 'ภาษาไทย ป.5'),
+        h('h1', { class: 'game-title' }, h('span', {}, 'ภารกิจนักสืบ'), h('span', { class: 'accent' }, 'ไข่เป็ดปริศนา')),
+        h('p', { class: 'game-subtitle' }, 'คำผิด คำถูกต้อง'),
+        h('div', { class: 'mascot mascot-hero bob', html: mascotSVG('happy') }),
+        h('p', { class: 'home-intro' }, 'สวัสดีจ้ะ! ฉันคือ "ไข่เป็ดนักสืบ" มาช่วยกันไขคดีคำเขียนผิด 3 ภารกิจกันเถอะ'),
+        h(
+          'div',
+          { class: 'name-box' },
+          h('label', { for: 'player-name' }, '🕵️ ชื่อนักสืบ'),
+          input,
+          err,
+          h('button', { class: 'btn btn-primary btn-big', onClick: start }, '🔍 เริ่มภารกิจ')
+        ),
+        h(
+          'ul',
+          { class: 'mission-list' },
+          [1, 2, 3].map((n) => h('li', {}, h('b', {}, `ภารกิจที่ ${n}`), ' ', MISSION_NAMES[n]))
+        )
+      )
+    );
+    requestAnimationFrame(() => input.focus());
+  });
+}
+
+// ---------------------------------------------------------- ก่อนเริ่มภารกิจ
+const INTRO = {
+  1: { text: 'จะมีคำ 2 คำ แตะเลือกคำที่เขียนถูก! มีทั้งหมด 8 ข้อ', emoji: '⚖️' },
+  2: { text: 'อ่านคำใบ้ แล้วหยิบตัวอักษรมาเรียงเป็นคำที่ถูกต้อง ใช้มือผ่านกล้องหรือเมาส์ก็ได้ 5 ข้อ', emoji: '🤏' },
+  3: { text: 'มีคำ 4 คำ แต่มีคนร้าย (คำเขียนผิด) แฝงอยู่ 1 คำ แตะจับตัวคนร้าย! 8 คดี', emoji: '🚨' },
+};
+
+function showMissionIntro(n) {
+  state.currentMission = n;
+  mount((root) => {
+    const prev = n > 1 ? state.results[n - 1] : null;
+    root.append(
+      h(
+        'section',
+        { class: 'intro' },
+        prev
+          ? h('div', { class: 'prev-result' }, `🎉 ภารกิจที่ ${n - 1} สำเร็จ! ตอบถูก ${prev.correct}/${prev.total} ข้อ`)
+          : null,
+        h('div', { class: 'intro-emoji' }, INTRO[n].emoji),
+        h('h2', { class: 'mission-title' }, `ภารกิจที่ ${n}: ${MISSION_NAMES[n]}`),
+        mascotWithBubble(prev ? 'cheer' : 'happy', INTRO[n].text, { size: 'lg' }),
+        h('button', { class: 'btn btn-primary btn-big', onClick: () => (sfx.click(), startMission(n)) }, 'เริ่มเลย! ➜')
+      )
+    );
+  });
+}
+
+function startMission(n) {
+  state.currentMission = n;
+  const onDone = (res) => {
+    state.results[n] = res;
+    if (n < 3) showMissionIntro(n + 1);
+    else showSummary();
+  };
+  mount((root) => {
+    if (n === 1) return runMission1(root, { pool: WORDS, count: 8, onDone });
+    if (n === 2) return runMission2(root, { pool: WORDS, count: 5, onDone });
+    return runMission3(root, { pool: WORDS, count: 8, onDone });
+  });
+}
+
+// ------------------------------------------------------------- สรุปผล
+function starCount() {
+  if (!state.maxScore) return 0;
+  const pct = state.score / state.maxScore;
+  return pct >= 0.8 ? 3 : pct >= 0.5 ? 2 : 1;
+}
+
+function showSummary(reviewResult = null) {
+  state.currentMission = null;
+  mount((root) => {
+    const stars = starCount();
+    const msg = ['', 'เก่งมาก! ฝึกอีกนิดจะเป็นนักสืบมือหนึ่ง', 'ยอดเยี่ยม! เกือบสมบูรณ์แบบแล้ว', 'สุดยอดนักสืบ! สายตาคมกริบ'][stars];
+    const mistakes = state.notebook.filter((e) => e.mission !== 'review');
+    const reviewWords = [...new Set(mistakes.map((e) => e.correct))]
+      .map((c) => WORDS.find((w) => w.correct === c))
+      .filter(Boolean);
+
+    root.append(
+      h(
+        'section',
+        { class: 'summary' },
+        h(
+          'div',
+          { class: 'summary-card no-print' },
+          h('h2', {}, `🎖️ ปิดคดีครบ 3 ภารกิจแล้ว นักสืบ ${state.name}!`),
+          h('div', { class: 'big-stars', 'aria-label': `ได้ ${stars} ดาว` }, [1, 2, 3].map((i) => h('span', { class: i <= stars ? 'on' : '' }, '★'))),
+          h('div', { class: 'total-score' }, h('b', {}, state.score), ` / ${state.maxScore} คะแนน`),
+          h('p', {}, msg),
+          h(
+            'ul',
+            { class: 'result-list' },
+            [1, 2, 3].map((n) => {
+              const r = state.results[n];
+              return h('li', {}, `ภารกิจที่ ${n} ${MISSION_NAMES[n]}: `, h('b', {}, r ? `ถูก ${r.correct}/${r.total}` : '-'));
+            })
+          ),
+          reviewResult ? h('p', { class: 'review-result' }, `🔁 ทบทวนคำที่ผิด: ถูก ${reviewResult.correct}/${reviewResult.total} ข้อ`) : null
+        ),
+        renderNotebook(),
+        h(
+          'div',
+          { class: 'btn-row no-print' },
+          reviewWords.length
+            ? h('button', { class: 'btn btn-secondary btn-big', onClick: () => startReview(reviewWords) }, '🔁 เล่นภารกิจซ้ำเฉพาะคำที่ผิด')
+            : null,
+          h('button', { class: 'btn btn-secondary btn-big', onClick: () => window.print() }, '🖨️ พิมพ์/บันทึกสมุด'),
+          h('button', { class: 'btn btn-primary btn-big', onClick: resetForNext }, '👫 เริ่มใหม่ให้เพื่อนคนต่อไป')
+        )
+      )
+    );
+    if (!reviewResult) {
+      sfx.win();
+      confetti();
+    }
+  });
+}
+
+function startReview(words) {
+  sfx.click();
+  state.currentMission = 'review';
+  mount((root) =>
+    runMission1(root, {
+      pool: words,
+      count: words.length,
+      missionKey: 'review',
+      scoring: false,
+      title: '🔁 ทบทวนคำที่เคยผิด',
+      onDone: (res) => showSummary(res),
+    })
+  );
+}
+
+// ----------------------------------------------------------------- รีเซ็ต
+function resetForNext() {
+  sfx.click();
+  resetState(); // ล้างชื่อ คะแนน สมุดบันทึก
+  showHome(); // mount() จะเรียก cleanup ซึ่งปิดกล้องด้วย
+}
+
+function requestHome() {
+  if (confirm('ต้องการเริ่มใหม่หรือไม่? คะแนนและสมุดบันทึกของคนนี้จะถูกล้างทั้งหมด')) resetForNext();
+}
+
+// ------------------------------------------------------------------ start
+initHud(document.getElementById('hud'), { onRequestHome: requestHome });
+showHome();
+
+</script>
+  </body>
+</html>
